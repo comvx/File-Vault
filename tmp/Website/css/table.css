@@ -1,0 +1,50 @@
+@media (min-width: 300px) and (max-width: 1024px)  {
+
+	table, thead, tbody, th, td, tr, tfood { 
+		display: block; 
+  }
+  table{
+    overflow: scroll;
+  }
+	
+	thead tr { 
+    visibility: hidden;
+  }
+  thead{
+    visibility: hidden;
+    height: 0px;
+  }
+  
+	
+  td { 
+		position: relative;
+		padding-left: 50%; 
+	}
+	
+	td:before { 
+		position: absolute;
+		top: 13px;
+		left: 6px;
+		width: auto; 
+    padding-right: 10px;
+    color: #3a3b45;
+  }
+  img, input{
+    margin-left: 90px;
+  }
+  img{
+    margin-left: 55px;
+    visibility: hidden;
+  }
+  .secret_key_dis, .master_password_dis{
+    margin-left: -10px;
+  }
+	td:nth-of-type(1):before { content: "Title"; }
+	td:nth-of-type(2):before { content: "Username"; }
+	td:nth-of-type(3):before { content: "Password"; }
+	td:nth-of-type(4):before { content: ""; }
+}
+.mail-custom-btn-add{
+  position: absolute;
+  bottom: 10px;
+}

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+		<title>Vault | Vault</title>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="icon" type="image/png" href="images/icons/favicon.ico">
+		<link rel="stylesheet" type="text/css" href="fonts/font-awesome-4.7.0/css/font-awesome.min.css">
+		<link rel="stylesheet" type="text/css" href="vendor/animate/animate.css">
+		<link rel="stylesheet" type="text/css" href="vendor/select2/select2.min.css">
+		<link rel="stylesheet" type="text/css" href="vendor/perfect-scrollbar/perfect-scrollbar.css">
+		<link rel="stylesheet" type="text/css" href="css/util.css">
+		<link rel="stylesheet" href="css/custom-buttons.css">
+        <link rel="stylesheet" type="text/css" href="css/main.css">
+		<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+		<link rel="stylesheet" type="text/css" href="css/account.css">
+		<link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+		<link href="https://fonts.googleapis.com/css2?family=Cabin:wght@500&amp;display=swap" rel="stylesheet">
+	</head>
+	<body>
+		<div class="limiter">
+			<canvas id="canvas" style="width: 100%;height: 100%;position: absolute;" width="1920" height="979"></canvas>
+			<header id="header">
+				<nav class="dc-menu">
+				  <a href="#" class="dc-menu-trigger"><span>Menu</span></a>
+				  <div class="menu-overlay">
+					<ul>
+					  <a href="/home"><li>Home</li></a>
+					  <a href="/logout"><li>Log Out</li></a>
+					</ul>
+				  </div>
+				</nav>
+			</header>
+			<a href="/home" type="button" class="return" style="position: absolute;"><img class="return" src="images/icons/return.png"></a>
+			<div class="container-table100">
+				<div class="wrap-table100">
+					<div class="table100">
+						<div class="card">
+							<form action="" method="POST">
+								<h5 class="card-header">
+									<img class="account_icon" src="https://img.icons8.com/color/30/000000/safe.png">
+									| <input style="font-size:1rem !important" class="form-control card-text" id="hoster_input" name="hoster_input" type="text" value="Vault">
+									<a type="button" href="/account/6/delete"><svg class="delete_account" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="45" height="45" viewBox="0 0 172 172" style=" fill:#000000;"><g fill="none" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><path d="M0,172v-172h172v172z" fill="none"></path><path d="M86,172c-47.49649,0 -86,-38.50351 -86,-86v0c0,-47.49649 38.50351,-86 86,-86v0c47.49649,0 86,38.50351 86,86v0c0,47.49649 -38.50351,86 -86,86z" fill="#1d1d1d"></path><g id="original-icon" fill="#e74c3c"><path d="M76.7808,32.9896c-3.79032,0 -6.9144,3.12408 -6.9144,6.9144v4.6096h-23.048c-0.82829,-0.009 -1.60256,0.42315 -2.0257,1.1434c-0.41414,0.72025 -0.41414,1.60256 0,2.32281c0.42315,0.72025 1.19742,1.1524 2.0257,1.1434h2.3048v82.9728c0,3.80832 3.10608,6.9144 6.9144,6.9144h59.9248c3.80832,0 6.9144,-3.10608 6.9144,-6.9144v-82.9728h2.3048c0.82829,0.009 1.60256,-0.42315 2.0257,-1.1434c0.41414,-0.72025 0.41414,-1.60256 0,-2.32281c-0.42315,-0.72025 -1.19742,-1.1524 -2.0257,-1.1434h-23.048v-4.6096c0,-3.79032 -3.12408,-6.9144 -6.9144,-6.9144zM76.7808,37.5992h18.4384c1.27844,0 2.3048,1.02636 2.3048,2.3048v4.6096h-23.048v-4.6096c0,-1.27844 1.02636,-2.3048 2.3048,-2.3048zM69.8664,74.476c0.5852,0 1.17941,0.22508 1.62957,0.67523l14.50403,14.50403l14.50403,-14.50403c0.90031,-0.90031 2.35882,-0.90031 3.25913,0c0.90031,0.90031 0.90031,2.35882 0,3.25913l-14.50403,14.50403l14.50403,14.50403c0.90031,0.90031 0.90031,2.35882 0,3.25913c-0.45016,0.45016 -1.03536,0.67523 -1.62957,0.67523c-0.59421,0 -1.17941,-0.22508 -1.62957,-0.67523l-14.50403,-14.50403l-14.50403,14.50403c-0.45016,0.45016 -1.03536,0.67523 -1.62957,0.67523c-0.59421,0 -1.17941,-0.22508 -1.62957,-0.67523c-0.90031,-0.90031 -0.90031,-2.35882 0,-3.25913l14.50403,-14.50403l-14.50403,-14.50403c-0.90031,-0.90031 -0.90031,-2.35882 0,-3.25913c0.45016,-0.45016 1.04436,-0.67523 1.62957,-0.67523z"></path></g></g></svg></a>				
+								</h5>
+								<div class="card-body">
+									<p class="card-title">username</p>
+									<input class="form-control card-text" placeholder="Enter username" id="username_input" name="username_input" readonly="" style="cursor: auto;" type="text" value="">
+									</div>
+									<div class="card-body" style="float: right;top: 0px!important;margin-top: -78px;">
+										<p class="card-title">comment</p>
+										<textarea class="form-control card-text comment" id="comment_input" name="comment" style="cursor: auto;" type="text">Here you are able to enter a comment</textarea>
+									</div>
+									<div class="card-body body2">
+									<p class="card-title">password</p>
+									<input class="form-control card-text" placeholder="Enter password" id="password_input" name="password_input" readonly="" style="cursor: auto;" type="text" value="">
+									</div>
+									<div class="card-body body3">
+										<input class="form-control readonly_input card-text" id="timestamps" name="timestamps" readonly="" type="text" value="">
+									</div>
+									<div class="seperator"></div>
+									<div class="card-body card-edit card-edit_username">
+										<p class="card-title">new username</p>
+									<input class="form-control card-text" id="edit_username" name="edit_username" placeholder="Enter new username" type="text" value="">
+									</div>
+									<div class="card-body card-edit_password">
+										<p class="card-title">new password</p>
+									<input class="form-control card-text" id="password" name="edit_password" placeholder="Enter new password" type="text" value="">
+									<a type="button" ,="" class="btn btn-primary genPass" value="" style="background-image: url('images/icons/genPass.png');border: none;" onclick="document.getElementById(&quot;password&quot;).value = Password.generate(32)"></a>
+								</div>
+								<input class="btn btn-primary btn-block text-white btn-user" id="save_account_changes" name="edit_submit" type="submit" value="Save">
+							</form>
+						</div>
+						
+					</div>
+				</div>
+			</div>
+		</div>
+	
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/handler.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.js"></script>
+	<script src="js/particle.min.js"></script>
+	<script src="js/theme.js"></script>
+	<script src="js/main.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+</body></html>

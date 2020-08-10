@@ -1,0 +1,20 @@
+.add {
+  background: #d32641;
+  padding: 20px;
+  font-size: 18px;
+  color: #fff;
+  border: none;
+  border-radius: 300px;
+  display: block;
+  margin: auto;
+  margin-top: 50px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  margin-bottom: 50px;
+}
+#input_text{
+  border: none;
+  width: 100%;
+  margin-bottom: 1rem;
+  color: #858796;
+}
