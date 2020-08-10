@@ -148,6 +148,18 @@ body .login_fields__submit input:hover {
   background: #e4d8db;
   cursor: pointer;
 }
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus,
+select:-webkit-autofill,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:focus {
+  border: none;
+  background-color: transparent!important;
+}
 /* Smartphone Hochformat (Portrait) */
 @media only screen
   and (min-width: 320px)

@@ -9,6 +9,9 @@ import secrets
 
 from binascii import hexlify
 
+from Vault.utils.cryptographie.hashing import hash
+from Vault.utils.data import pad
+
 gen = secrets.SystemRandom()
 
 #def gen_IV():
@@ -27,5 +30,6 @@ def gen_Pass():
 def gen_Number():
     return gen.randint(20, 35)
 
-def gen_user_id():
-    return "u-" + gen_String().decode()
+def gen_user_id(username):
+    print(len(pad(username, 64)))
+    return "u-" + hash(username, (len(username)**len(username))*round((len(username)/2)), pad(username, 64).encode())

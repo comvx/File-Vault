@@ -25,8 +25,8 @@ def create_tables():
 def register():
     form = auth()
     if form.validate_on_submit():
-        user_id = gen_user_id()
-        authentication = Credentials(form.username_input.data, form.password_input.data, user_id)
+        user_manager_id = gen_user_id(form.username_input.data)
+        authentication = Credentials(form.username_input.data, form.password_input.data, user_manager_id)
         secret_key = authentication.get_SecretKey()
         salt = secret_key[0:16]
         hashed_master_password = hash(form.password_input.data, 14082, salt)
@@ -34,10 +34,8 @@ def register():
         form.username_input.data = "FUCK U "
         form.password_input.data = "IN THE ASS!"
 
-        print(User.query.filter_by(username=hashed_username).all())
-
-        if len(User.query.filter_by(username=hashed_username).all()) == 0:
-            user = User(username=hashed_username, master_password=hashed_master_password, user_manager_id=user_id)
+        if len(User.query.filter_by(user_manager_id=user_manager_id).all()) == 0:
+            user = User(username=hashed_username, master_password=hashed_master_password, user_manager_id=user_manager_id)
             db.session.add(user)
             db.session.commit()
             login_user(user)
@@ -49,10 +47,8 @@ def register():
             del hashed_username
             del hashed_master_password
             del user
-            print(2)
 
             return render_template('register.html', form=form, style_bg_status=style_bg_status_blue)
         else:
             return render_template('register.html', form=form, style_bg_status=style_bg_status_red)
-    print(33)
     return render_template('register.html', form=form, style_bg_status=style_bg_status_blue)
