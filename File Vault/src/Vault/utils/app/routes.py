@@ -21,7 +21,7 @@ style_bg_status_red = 'background: rgb(227, 72, 72);background: radial-gradient(
 def create_tables():
     db.create_all()
 
-@app.route("/", methods=['GET', 'POST'])
+@app.route("/register", methods=['GET', 'POST'])
 def register():
     form = auth()
     if form.validate_on_submit():
@@ -31,8 +31,8 @@ def register():
         salt = secret_key[0:16]
         hashed_master_password = hash(form.password_input.data, 14082, salt)
         hashed_username = hash(form.username_input.data, 14082, salt)
-        form.username_input.data = "FUCK U "
-        form.password_input.data = "IN THE ASS!"
+        form.username_input.data = ""
+        form.password_input.data = ""
 
         if len(User.query.filter_by(user_manager_id=user_manager_id).all()) == 0:
             user = User(username=hashed_username, master_password=hashed_master_password, user_manager_id=user_manager_id)
@@ -52,3 +52,45 @@ def register():
         else:
             return render_template('register.html', form=form, style_bg_status=style_bg_status_red)
     return render_template('register.html', form=form, style_bg_status=style_bg_status_blue)
+
+@app.route("/login", methods=['GET', 'POST'])
+def login():
+    form = auth()
+    if form.validate_on_submit():
+        try:
+            user_manager_id = gen_user_id(form.username_input.data)
+            authentication = Credentials(form.username_input.data, form.password_input.data, user_manager_id)
+            secret_key = authentication.get_SecretKey()
+            salt = secret_key[0:16]
+            hashed_master_password = hash(form.password_input.data, 14082, salt)
+            hashed_username = hash(form.username_input.data, 14082, salt)
+            form.username_input.data = ""
+            form.password_input.data = ""
+
+            user = User.query.filter_by(user_manager_id=user_manager_id, username=hashed_username, master_password=hashed_master_password).first()
+            if user:
+                login_user(user, remember=True)
+
+                session_name = hashed_username + current_user.get_id()
+                session[session_name+"iv"] = secret_key[16:]
+                session[session_name+"salt"] = secret_key[0:16]
+
+                del hashed_username
+                del hashed_master_password
+                del user
+
+                return render_template('login.html', form=form, style_bg_status=style_bg_status_blue)
+            else:
+                return render_template('login.html', form=form, style_bg_status=style_bg_status_red, message="Wrong username and/or password")
+        except expression as identifier:
+            return render_template('login.html', form=form, style_bg_status=style_bg_status_red, message="Wrong username and/or password")
+    return render_template('login.html', form=form, style_bg_status=style_bg_status_blue)
+
+@app.route("/")
+def home():
+    return redirect(url_for("login"))
+
+@app.route("/logout")
+def logout():
+    login_user()
+    return redirect(url_for("home"))

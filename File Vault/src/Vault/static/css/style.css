@@ -8,6 +8,8 @@ body {
   resize: none!important;
   overflow: hidden;
   background: cover;
+  background-color: #3c3c3c;
+  animation: 1s ease-out 0s 1 onloadEffect_bg;
 }
 body ::-webkit-input-placeholder {
   color: #585858;
@@ -62,7 +64,8 @@ body .login {
   padding: 100px 40px 40px 40px;
   box-shadow: 0px 0px 30px 5px rgba(0, 0, 0, 0.3);
   background: rgb(34,34,34);
-  background: linear-gradient(0deg, rgba(34,34,34,1) 0%, rgba(51,51,51,1) 100%); 
+  background: linear-gradient(0deg, rgba(34,34,34,1) 0%, rgba(51,51,51,1) 100%);
+  animation: 1s ease-out 0s 1 onloadEffect_login;
 }
 body .login .validation {
   position: absolute;
@@ -173,7 +176,20 @@ select:-webkit-autofill:focus {
   and (max-width: 991px) {
 
 }
-
+.alert {
+  position: relative;
+  padding: .75rem 1.25rem;
+  margin-top: 4rem;
+  border: 1px solid transparent;
+  border-radius: .25rem;
+  width: 75%;
+  margin-left: 5.5%;
+  text-align: left;
+  font-family: 'Open Sans', sans-serif;
+}
+.alert-dark {
+  color: #ce5757;
+}
 /* Tablet Querformat (Landscape) - PC mit geringer Auflösung */
 @media only screen
   and (min-width: 992px)
@@ -185,4 +201,22 @@ select:-webkit-autofill:focus {
 @media only screen
   and (min-width: 1200px) {
 
+}
+@keyframes onloadEffect_login {
+  0% {
+    /*transform: translateY(-100%);*/
+    opacity: 0.25;
+  }
+  100% {
+    /*transform: translateY(0);*/
+    opacity: 1;
+  }
+}
+@keyframes onloadEffect_bg {
+  0% {
+    transform: scale(1.15);
+  }
+  100% {
+    transform: scale(1);
+  }
 }

@@ -3,17 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Vault - Register</title>
+  <title>Vault - Login</title>
   <link rel='stylesheet' href='https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/themes/smoothness/jquery-ui.css'>
   <link rel="stylesheet" href="/static/css/style.css">
   <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@600&display=swap" rel="stylesheet">
-  
+
 </head>
 <body id="bg" style="{{ style_bg_status }}"">
 <!-- partial:index.partial.html -->
   <div class='login'>
       <div class='login_title'>
-        <span>Create an account!</span>
+        <span>Log into your Account!</span>
       </div>
       <div class='login_fields'>
         <form method="POST" action="">
@@ -41,7 +41,7 @@
             <div class='login_fields__submit'>
               {{ form.submit(value='Log In', id="reg_button", autocomplete="off", autocorrect="off") }}
               <div class='forgot'>
-                <a href='{{ url_for("login") }}'>Have an account?</a>
+                <a href='{{ url_for("register") }}'>Don't have an account?</a>
               </div>
             </div>
             {% if message %}
