@@ -37,6 +37,13 @@ class Credentials:
             else:
                 self.mani_value = obj_2 + calc_value
             output = merged_data[obj_1:self.mani_value]
+        else:
+            calc_value = const - (obj_2)
+            if calc_value < 0:
+                self.mani_value = obj_2 - calc_value
+            else:
+                self.mani_value = obj_2 + calc_value
+            output = merged_data[obj_1:self.mani_value]
 
         return output
         #IV = 16

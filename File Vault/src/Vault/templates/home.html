@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+	<link rel='stylesheet' href='https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/themes/smoothness/jquery-ui.css'>
+	<title>Cute file browser</title>
+
+
+	<!-- Include our stylesheet -->
+	<link href="/static/css/home.css" rel="stylesheet"/>
+	<link href="/static/css/context-menu.css" rel="stylesheet"/>
+
+</head>
+<body>
+	<div class="filemanager">
+		<div class="breadcrumbs">
+			{% for i in range(1, current_folders|length) %}
+			<a href="/home?path={{ current_folder_href }}">
+				<span class="folderName">{{ current_folders[i] }}</span>
+			</a>
+			{% if i < (current_folders|length)-1 %}
+			<span class="arrow">→</span>
+			{% endif %}
+			{% endfor %}
+		</div>
+		<ul class="data animated" style="">
+			<form method="POST">
+				{{ home_add.hidden_tag() }}
+				<li class="folders add_folder"><a class="folders"><span class="icon folder add"></span><span class="name">{{ home_add.folder_name_input(class="folder_name") }}</span> <span class="details">{{ home_add.submit(class="btn btn-primary", type="submit") }}</span></a></li>
+			</form>
+			{% for data in data_set %}
+			{% if data.data == "" %}
+			<li class="folders"><a href="/home?path={{ data.href }}" title="{{ data.href }}" class="folders"><span class="icon folder full"></span><span class="name">{{ data.name }}</span> <span class="details">Folder</span></a><a class="delete_href" href="/delete?path={{ data.href }}"><span class="delete"></span></a></li>
+			{% else %}
+			<li class="files"><a href="/home?path={{ data.href }}" title="{{ data.href }}" class="files"><span class="icon file f-{{ data.type }}">.{{ data.type }}</span><span class="name">{{ data.name }}</span> <span class="details">{{ data.data|length }} Bytes</span></a><a class="delete_href" href="/delete?path={{ data.href }}"><span class="delete"></span></a></li>
+			{% endif %}
+		{% endfor %}
+		</ul>
+
+		<div class="nothingfound">
+			<div class="nofiles"></div>
+			<span>No files here.</span>
+		</div>
+
+	</div>
+
+	<!-- Include our script files -->
+	<script src="/static/js/home.js"></script>
+	<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
+	<script src='https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js'></script>
+</body>
+</html>
