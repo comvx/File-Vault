@@ -28,7 +28,7 @@ def create_tables():
 @app.route("/")
 def index():
     if current_user.is_authenticated:
-        return redirect("/home?path=/root")
+        return redirect("/home?path=")
     else:
         return redirect(url_for('login'))
 
@@ -74,7 +74,7 @@ def register():
             return redirect(url_for('index'))
         else:
             return render_template('register.html', form=form, style_bg_status=style_bg_status_red)
-    return render_template('login.html', form=form, style_bg_status=style_bg_status_blue)
+    return render_template('register.html', form=form, style_bg_status=style_bg_status_blue)
 
 @app.route("/login", methods=['GET', 'POST'])
 def login():
@@ -115,29 +115,37 @@ def login():
     return render_template('login.html', form=form, style_bg_status=style_bg_status_blue)
 
 def transform_dataset(ppath):
+    absolute_path = ppath
     ppath = ppath.split("/")[-1]
     dirs = current_user.directorys
 
     output = list()
-
     for directory in dirs:
         focused_dir = directory.dir_path.split("/")[-1]
         if str(focused_dir) == str(ppath):
             for file in directory.files:
                 data_set = dataset(file.file_name, file.file_ext, directory.dir_path, file.file_data, directory.dir_path+"/"+file.file_name+"."+file.file_ext)
                 output.append(data_set.data_set)
-        child_dir = directory.dir_path.split("/")[-2]
-        if str(child_dir) == str(ppath):
-            data_set = dataset(directory.dir_name, "folder", directory.dir_path, "", directory.dir_path)
-            output.append(data_set.data_set)
-
+        if directory.dir_path.count("/") > absolute_path.count("/"):
+            child_dir = directory.dir_path.replace(absolute_path, "")
+            if len(child_dir.split("/")) == 2:
+                data_set = dataset(directory.dir_name, "folder", directory.dir_path, "", directory.dir_path)
+                output.append(data_set.data_set)
 
     return output
 
-def duplicates(folder_name):
+def check_for_twice_name(path, name):
     dirs = current_user.directorys
     for directory in dirs:
-        if str(directory.dir_name) == str(folder_name):
+        if str(directory.dir_path) == str(path+"/"+name):
+            return False
+    return True
+
+def duplicates(folder_name, current_path):
+    dirs = current_user.directorys
+    new_path = current_path+"/"+folder_name
+    for directory in dirs:
+        if str(directory.dir_path) == str(new_path):
             return False
     return True
 
@@ -151,7 +159,7 @@ def home():
 
         if home_add.validate_on_submit():
             if home_add.submit:
-                if duplicates(home_add.folder_name_input.data):
+                if duplicates(home_add.folder_name_input.data, calling_path):
                     new_dir = Directory(dir_name=home_add.folder_name_input.data, dir_path=calling_path+"/"+home_add.folder_name_input.data, user=current_user)
                     db.session.add(new_dir)
                     db.session.commit()
@@ -176,18 +184,35 @@ def upload():
             time.sleep(5)
     return render_template("upload.html", form=form)
 
+def delete_childs(absolute_path):
+    dirs = current_user.directorys
+    for directory in dirs:
+        if absolute_path in directory.dir_path:
+            db.session.delete(directory)
+            for file in directory.files:
+                db.session.delete(file)
+            db.session.commit()
+            
+
+
 @app.route("/delete", methods=['GET', 'POST'])
 def delete():
     del_data = request.args.get('path')
+    dirs = current_user.directorys
+    del_obj = del_data.split("/")[-1]
     if "." in del_data:#file
-        pass
-    else:#folder
-        del_foldername = del_data.split("/")[-1]
-        dirs = current_user.directorys
         for directory in dirs:
-            if str(del_foldername) == str(directory.dir_name):
-                directory.remove()
-                session.commit()
+            for file in directory.files:
+                if str(del_obj) == str(file.file_name+"."+file.file_ext):
+                    db.session.delete(file)
+                    db.session.commit()
+    else:#folder
+        delete_childs(del_data)
+        for directory in dirs:
+            if str(del_obj) == str(directory.dir_name):
+                db.session.delete(directory)
+                db.session.commit()
+    return redirect("/")
 
 
 

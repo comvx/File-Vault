@@ -211,7 +211,7 @@ form{
     transition: 0.3s background-color;
     box-shadow: 0 0 13px 0px rgb(37 37 37 / 1);
 }
-.filemanager .data li:hover > .delete::after {
+.filemanager .data li:hover > .delete_href {
 	opacity: 1;
 }
 .filemanager .data li:hover {
@@ -431,13 +431,20 @@ form{
 	right: -4px;
 }
 .delete::after {
-	content: url("/static/images/cross.png");
-	position: absolute;
-	right: 5px;
-	opacity: 1;
+	content: url(/static/images/cross.png);
+    position: absolute;
+    right: 5px;
+    opacity: 1;
+    top: 5px;
 }
 .delete_href{
 	opacity: 0;
+	width: 20px!important;
+	height: 20px!important;
+	position: absolute!important;
+	right: 5px!important;
+	top: 5px!important;
+    left: 92%!important;
 }
 .delete_href:hover{
 	opacity: 1;
