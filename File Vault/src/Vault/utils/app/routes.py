@@ -173,7 +173,6 @@ def upload():
             for file in files:
                 file_contents = file.stream.read()
                 file_name = secure_filename(file.filename)
-                # Do everything else you wish to do with the contents
             time.sleep(5)
     return render_template("upload.html", form=form)
 
