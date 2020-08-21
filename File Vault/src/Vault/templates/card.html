@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Vault | Name: {{ data.username }}</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/static/css/card.css">
+
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600|Abel">
+
+</head>
+<body class="align bg" id="bg">
+  <div class="grid align__item">
+    <div class="card">
+
+      <header class="card__header">
+        <h3 class="card__title">Vault Details</h3>
+        <svg xmlns="http://www.w3.org/2000/svg" class="card__logo" width="140" height="43" viewBox="0 0 175.7 53.9"></svg>
+
+      </header>
+
+      <form action="" method="post" class="form">
+
+        <div class="card__number form__field">
+          <label for="card__number" class="card__number__label">Vault Password</label>
+          <input type="text" id="card__number" readonly class="card__number__input" value="{{ data.password }}">
+        </div>
+
+        <div class="card__expiration form__field">
+          <label for="card__expiration__year">Username</label>
+          <span style="color:#fff;">{{ data.username }}</span>
+
+        </div>
+        <div class="card__expiration form__field" style="margin-left: 24px;">
+          <label for="card__expiration__year">Name</label>
+          <span style="color:#fff;">{{ data.name }}</span>
+
+        </div>
+
+        <div class="card__ccv form__field">
+          <label for="">ID</label>
+          <span style="color:#fff;margin-left: 3px;" class="card__ccv__input" >{{ data.id }}</span>
+        </div>
+
+      </form>
+
+    </div>
+  </div>
+</body>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+</html>

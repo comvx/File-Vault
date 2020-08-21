@@ -57,3 +57,15 @@ class Credentials:
         merged_data_iv = hash((self.vault_username+self.vault_masterpassword)*(self.len_vault_masterpassword+self.len_vault_username), 99999, salt)
         iv = self.get_creds(self.len_vault_masterpassword, self.len_vault_username, 16, merged_data_iv).encode()
         return iv+salt
+
+    def gen_UserKey(self, salt): #2 start
+        hash_list = hash(self.vault_username, 10000, salt), hash(self.vault_masterpassword, 10000, salt), hash(self.user_id, 10000, salt)
+        user_pass_hash = hash(hash_list[1] + hash_list[2], 50000, salt)
+        pass_id_hash = hash(hash_list[2] + hash_list[0], 50000, salt)
+        userKey = hash(user_pass_hash + pass_id_hash, len(self.vault_username) * len(self.vault_masterpassword), salt)
+        return userKey
+
+    def gen_key(self, psecret_key, salt):#3 start
+        secret_key = hash(psecret_key.decode("ascii"), 99999, salt)
+        key = hash(secret_key + self.gen_UserKey(salt), 99999, salt)
+        return key

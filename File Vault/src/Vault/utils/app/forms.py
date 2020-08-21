@@ -13,5 +13,10 @@ class data_upload(FlaskForm):
     submit = SubmitField('Upload')
 class home_form():
     class add(FlaskForm):
-        folder_name_input = StringField("Folder name", validators=[DataRequired()])
+        folder_name_input = StringField("Folder name")
+        submit = SubmitField('Create')
+    class vault_add(FlaskForm):
+        vault_name = StringField("Vault name")
+        vault_username = StringField("Vault username")
+        vault_password = StringField("Vault password")
         submit = SubmitField('Create')

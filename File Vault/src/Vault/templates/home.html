@@ -16,25 +16,40 @@
 <body>
 	<div class="filemanager">
 		<div class="breadcrumbs">
+			<a class="upload" href="/upload?path={{ current_folder_path }}">
+				<svg class="upload-empty-state " height="55" viewBox="0 0 46 55" width="46" focusable="false" role="presentation">  
+					<path class="fill-color" d="M21,29v4a1,1,0,0,0,.91,1h2.18A1,1,0,0,0,25,33V29h2.74a1,1,0,0,0,.76-1.65l-4.83-5.62a1,1,0,0,0-1.41-.11l-.11.11-4.82,5.62A1,1,0,0,0,18.09,29Z" fill="#ffffff"></path>
+					<polyline class="stroke-color" fill="none" points="13 36 13 39 33 39 33 36" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></polyline>
+				</svg>
+			</a>
+
 			{% for i in range(1, current_folders|length) %}
-			<a href="/home?path={{ current_folder_href }}">
+			<a href="/home?path={% for index in range(i+1) %}{% if index == 0 %}{{ current_folders[index] }}{% else %}{{ '/'+current_folders[index] }}{% endif %}{% endfor %}">
 				<span class="folderName">{{ current_folders[i] }}</span>
 			</a>
 			{% if i < (current_folders|length)-1 %}
 			<span class="arrow">→</span>
 			{% endif %}
 			{% endfor %}
+			{% if current_folders|length == 1 %}
+			<a href="/home?path=">
+				<span class="folderName">/</span>
+			</a>
+			{% endif %}
 		</div>
 		<ul class="data animated" style="">
 			<form method="POST">
 				{{ home_add.hidden_tag() }}
-				<li class="folders add_folder"><a class="folders"><span class="icon folder add"></span><span class="name">{{ home_add.folder_name_input(class="folder_name") }}</span> <span class="details">{{ home_add.submit(class="btn btn-primary", type="submit") }}</span></a></li>
+				<li class="folders add_folder"><a class="folders"><span class="icon folder add"></span><span class="name">{{ home_add.folder_name_input(class="folder_name", autocomplete="off", autocorrect="off", placeholder="enter folder name") }}</span> <span class="details">{{ home_add.submit(class="btn btn-primary", type="submit") }}</span></a></li>
+				<li class="folders add_vault"><a class="folders"><span class="icon folder vault"></span><span class="name">{{ vault_add.vault_name(class="folder_name vault_name", id="vault_name", autocomplete="off", autocorrect="off", placeholder="enter vault name") }}{{ vault_add.vault_username(class="folder_name vault_username", id="vault_username", autocomplete="off", autocorrect="off", placeholder="enter username") }}{{ vault_add.vault_password(class="folder_name vault_password", id="vault_password", autocomplete="off", autocorrect="off", placeholder="enter password") }}</span> <span class="details">{{ vault_add.submit(class="btn btn-primary vault_submit", type="submit", id="vault_submit") }}<button class="btn btn-primary vault_next" id="vault_next" type="button" onclick="next_input()">next</button></span></a></li>
 			</form>
 			{% for data in data_set %}
 			{% if data.data == "" %}
-			<li class="folders"><a href="/home?path={{ data.href }}" title="{{ data.href }}" class="folders"><span class="icon folder full"></span><span class="name">{{ data.name }}</span> <span class="details">Folder</span></a><a class="delete_href" href="/delete?path={{ data.href }}"><span class="delete"></span></a></li>
+			<li class="folders"><a href="/home?path={{ data.href }}" title="{{ data.href }}" class="folders"><span class="icon folder full"></span><span class="name">{{ data.name }}</span> <span class="details">Folder</span></a><a class="delete_href" href="/delete?path={{ data.href }}&enc_name=folder"><span class="delete"></span></a></li>
+			{% elif data.type == "vault" %}
+			<li class="folders"><a onload="" href="{{ data.href }}" title="{{ data.href }}" class="folders"><span class="icon folder vault vault_item"></span><span class="name">{{ data.name }}</span> <span class="details">Folder</span></a><a class="delete_href" href="/delete?path={{ data.href }}&enc_name=folder"><span class="delete"></span></a></li>
 			{% else %}
-			<li class="files"><a href="/home?path={{ data.href }}" title="{{ data.href }}" class="files"><span class="icon file f-{{ data.type }}">.{{ data.type }}</span><span class="name">{{ data.name }}</span> <span class="details">{{ data.data|length }} Bytes</span></a><a class="delete_href" href="/delete?path={{ data.href }}"><span class="delete"></span></a></li>
+			<li class="files"><a href="/home?path={{ data.href }}" title="{{ data.href }}" class="files"><span class="icon file f-{{ data.type }}">.{{ data.type }}</span><span class="name">{{ data.name }}</span> <span class="details">{{ data.data|length }} Bytes</span></a><a class="delete_href" href="/delete?path={{ data.path }}&enc_name={{ data.enc_name }}"><span class="delete"></span></a></li>
 			{% endif %}
 		{% endfor %}
 		</ul>

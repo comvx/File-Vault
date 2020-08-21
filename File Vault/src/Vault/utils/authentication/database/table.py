@@ -7,6 +7,7 @@ def load_user(user_id):
     return User.query.get(int(user_id))
 
 files = db.Table('directory_files', db.Column('file_id', db.Integer, db.ForeignKey('file.id')), db.Column('directory_id', db.Integer, db.ForeignKey('directory.id')))
+vaults = db.Table('directory_vaults', db.Column('vault_id', db.Integer, db.ForeignKey('vault.id')), db.Column('directory_id', db.Integer, db.ForeignKey('directory.id')))
 
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
@@ -25,10 +26,18 @@ class Directory(db.Model):
     dir_path = db.Column(db.String(), nullable=False, default="/")
     
     files = db.relationship('File', secondary=files, backref='directory')
+    vaults = db.relationship('Vault', secondary=vaults, backref='directory')
 
 class File(db.Model):
     id = db.Column(db.Integer, primary_key=True)
 
-    file_name = db.Column(db.String(), nullable=False, default="defaul")
-    file_ext = db.Column(db.String(), nullable=False, default=".defaut")
+    file_name = db.Column(db.String(), nullable=False)
+    file_ext = db.Column(db.String(), nullable=False)
     file_data = db.Column(db.String())
+
+class Vault(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+
+    vault_name = db.Column(db.String(), nullable=False)
+    vault_username = db.Column(db.String())
+    vault_password = db.Column(db.String())
