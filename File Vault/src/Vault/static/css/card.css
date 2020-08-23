@@ -8,6 +8,9 @@ html {
 
 body {
   background-color: #f1f1f1;
+  background-image: url("https://s3-us-west-2.amazonaws.com/s.cdpn.io/345377/mojave-night.jpg");
+  background-size: cover!important;
+  background-repeat: no-repeat;
   color: #171a1c;
   font: 300 1rem/1.5 Source Sans Pro, sans-serif;
   margin: 0;
@@ -21,12 +24,47 @@ body {
   flex-direction: row;
   background-color: #232729;
 }
-
+.return {
+  position: absolute;
+  width: 25px;
+  height: 25px;
+  left: 0.5%!important;
+  top: 0.5%!important;
+}
 body {
 	background-size: 400% 400%;
-	animation: gradient 15s ease infinite;
+  animation: gradient 15s ease infinite;
 }
-
+.card__number:hover > .value-container{
+  visibility: visible;
+}
+.value-container{
+  visibility: hidden;
+  display: inline-block;
+  cursor: pointer;
+  border: 1px dashed #cbcccd;
+  -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
+  border-radius: 6px;
+  padding-left: 4px;
+  padding-right: 4px;
+  padding-bottom: 2px;
+  padding-top: 1px;
+  position: absolute;
+  margin-top: 12px;
+}
+.field-button{
+  font: revert!important;
+  display: inline-block;
+    border: 1px solid #cbcccd;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    padding: 2px 4px;
+    text-decoration: none;
+    color: #cbcccd;
+    background-color: transparent;
+}
 
 .align__item--start {
   align-self: flex-start;

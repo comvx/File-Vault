@@ -2,7 +2,7 @@ import os, sys
 import secrets
 import json, time
 
-from flask import render_template, url_for, flash, redirect, request, abort, make_response
+from flask import render_template, url_for, flash, redirect, request, abort, make_response, Response
 from flask_login import login_user, current_user, logout_user, login_required
 from flask_mail import Message
 
@@ -10,10 +10,10 @@ from werkzeug.utils import secure_filename
 
 from Vault.utils.authentication.database.table import User, File, Directory, Vault
 from Vault.utils.app import *
-from Vault.utils.app.forms import auth, data_upload, home_form
+from Vault.utils.app.forms import auth, data_upload, home_form, credit_card
 from Vault.utils.cryptographie import hash, encrypt, decrypt
 from Vault.utils.authentication import Credentials
-from Vault.utils.authentication.generator import gen_user_id
+from Vault.utils.authentication.generator import gen_user_id, gen_Pass
 from Vault.utils.data import *
 from Vault import *
 
@@ -29,6 +29,13 @@ def create_tables():
 def index():
     if current_user.is_authenticated:
         return redirect("/home?path=")
+    else:
+        return redirect(url_for('login'))
+
+@app.route("/<string:path>")
+def index_path(path):
+    if current_user.is_authenticated:
+        return redirect("/home?path="+path)
     else:
         return redirect(url_for('login'))
 
@@ -110,29 +117,29 @@ def transform_dataset(absolute_path):
     dirs = current_user.directorys
 
     output = list()
-    for directory in dirs:
-        if str(directory.dir_path) == str(absolute_path):
-            session_name = current_user.user_manager_id + current_user.username + current_user.get_id()
-            for file in directory.files:
-                data_set = dataset(decrypt(file.file_name, session[session_name+"key"], session[session_name+"iv"]).decode(), decrypt(file.file_ext, session[session_name+"key"], session[session_name+"iv"]).decode(), directory.dir_path, file.file_data, directory.dir_path+"/"+file.file_name, file.file_name)
-                output.append(data_set.data_set)
-            for vault in directory.vaults:
-                data_set = dataset(decrypt(vault.vault_name, session[session_name+"key"], session[session_name+"iv"]).decode(), "vault", directory.dir_path, "::", "/open?path=" + directory.dir_path + "&name=" + vault.vault_name + "&type=vault" , vault.vault_name)
-                output.append(data_set.data_set)
-        if directory.dir_path.count("/") > absolute_path.count("/") and directory.dir_path.startswith(absolute_path):
-            if absolute_path.count("/") > 0:
-                if directory.dir_path.split("/")[1] == absolute_path.split("/")[1]:
-                    child_dir = directory.dir_path.replace(absolute_path, "", 1)
-                    if len(child_dir.split("/")) == 2:
+    try:
+        for directory in dirs:
+            if str(directory.dir_path) == str(absolute_path):
+                session_name = current_user.user_manager_id + current_user.username + current_user.get_id()
+                for file in directory.files:
+                    data_set = dataset(decrypt(file.file_name, session[session_name+"key"], session[session_name+"iv"]).decode(), decrypt(file.file_ext, session[session_name+"key"], session[session_name+"iv"]).decode(), directory.dir_path, file.file_data, directory.dir_path+"/"+file.file_name, file.file_name)
+                    output.append(data_set.data_set)
+                for vault in directory.vaults:
+                    data_set = dataset(decrypt(vault.vault_name, session[session_name+"key"], session[session_name+"iv"]).decode(), "vault", directory.dir_path, "::", directory.dir_path + "/" + vault.vault_name, vault.vault_name)
+                    output.append(data_set.data_set)
+            if directory.dir_path.count("/") > absolute_path.count("/") and directory.dir_path.startswith(absolute_path):
+                if absolute_path.count("/") > 0:
+                    if directory.dir_path.split("/")[1] == absolute_path.split("/")[1]:
+                        child_dir = directory.dir_path.replace(absolute_path, "", 1)
+                        if len(child_dir.split("/")) == 2:
+                            data_set = dataset(directory.dir_name, "folder", directory.dir_path, "", directory.dir_path, "")
+                            output.append(data_set.data_set)
+                else:
+                    if directory.dir_path.count("/") < 2:
                         data_set = dataset(directory.dir_name, "folder", directory.dir_path, "", directory.dir_path, "")
                         output.append(data_set.data_set)
-            else:
-                if directory.dir_path.count("/") < 2:
-                    data_set = dataset(directory.dir_name, "folder", directory.dir_path, "", directory.dir_path, "")
-                    output.append(data_set.data_set)
-
-
-            
+    except KeyError as e:
+        return redirect(url_for('logout'))
     return output
 
 def check_for_twice_name(path, name):
@@ -173,18 +180,19 @@ def home():
                         db.session.commit()
         if vault_add.validate_on_submit():
             if vault_add.submit:
-                session_name = current_user.user_manager_id + current_user.username + current_user.get_id()
-                directory = get_dir_by_path(calling_path)
-                if directory != None:
-                    new_vault = Vault(vault_name=encrypt(vault_add.vault_name.data.encode(), session[session_name+"key"], session[session_name+"iv"]).decode(), vault_username=encrypt(vault_add.vault_username.data.encode(), session[session_name+"key"], session[session_name+"iv"]).decode(), vault_password=encrypt(vault_add.vault_password.data.encode(), session[session_name+"key"], session[session_name+"iv"]).decode())
-                    directory.vaults.append(new_vault)
-                    db.session.commit()
+                try:
+                    session_name = current_user.user_manager_id + current_user.username + current_user.get_id()
+                    directory = get_dir_by_path(calling_path)
+                    if directory != None:
+                        new_vault = Vault(vault_name=encrypt(vault_add.vault_name.data.encode(), session[session_name+"key"], session[session_name+"iv"]).decode(), vault_username=encrypt(vault_add.vault_username.data.encode(), session[session_name+"key"], session[session_name+"iv"]).decode(), vault_password=encrypt(vault_add.vault_password.data.encode(), session[session_name+"key"], session[session_name+"iv"]).decode())
+                        directory.vaults.append(new_vault)
+                        db.session.commit()
+                except KeyError as e:
+                    return redirect(url_for('logout'))
 
         dataset = transform_dataset(calling_path)
 
         calling_path_splitter = calling_path.split("/")
-
-        print(absolute_path)
         return render_template('home.html', data_set=dataset, home_add=home_add, current_folder_path=absolute_path, current_folders=calling_path_splitter, current_folder_href=calling_path, vault_add=vault_add)
     else:
         return redirect(url_for("login"))
@@ -206,17 +214,20 @@ def upload():
             if directory != None:
                 files = request.files.getlist(form.data.name)
                 if files:
-                    session_name = current_user.user_manager_id + current_user.username + current_user.get_id()
-                    for file in files:
-                        file_contents = encrypt(file.stream.read(), session[session_name+"key"], session[session_name+"iv"])
-                        file_name = secure_filename(file.filename)
-                        file_ext = file_name.split(".")[-1]
-                        
-                        new_file = File(file_name=encrypt(file_name.encode(), session[session_name+"key"], session[session_name+"iv"]).decode(), file_ext=encrypt(file_ext.encode(), session[session_name+"key"], session[session_name+"iv"]).decode(), file_data=file_contents.decode())
-                        directory.files.append(new_file)
-                        db.session.commit()
-                    time.sleep(5)
-                    return redirect(url_for("index"))
+                    try:
+                        session_name = current_user.user_manager_id + current_user.username + current_user.get_id()
+                        for file in files:
+                            file_contents = encrypt(file.stream.read(), session[session_name+"key"], session[session_name+"iv"])
+                            file_name = secure_filename(file.filename)
+                            file_ext = file_name.split(".")[-1]
+                            
+                            new_file = File(file_name=encrypt(file_name.encode(), session[session_name+"key"], session[session_name+"iv"]).decode(), file_ext=encrypt(file_ext.encode(), session[session_name+"key"], session[session_name+"iv"]).decode(), file_data=file_contents.decode())
+                            directory.files.append(new_file)
+                            db.session.commit()
+                        time.sleep(5)
+                        return index_path(calling_path)
+                    except KeyError as e:
+                        return redirect(url_for('logout'))
         return render_template("upload.html", form=form)
     else:
         return redirect(url_for("login"))
@@ -227,6 +238,14 @@ def get_vault_by_name(vault_name, dir):
             return vault
     return None
 
+def get_data(data, ptype):
+    length = str(len(data)).encode()
+    while True:
+        yield(b'--frame\r\n'
+              b'Content-Type: ' + ptype.encode() + b'\r\n'
+              b'Content-Length: ' + length + b'\r\n'
+              b'\r\n'+ data + b'\r\n')
+        time.sleep(0.01)
 
 @app.route("/open", methods=['GET', 'POST'])
 def open():
@@ -235,15 +254,40 @@ def open():
         data_path = request.args.get('path')
         data_type = request.args.get('type')
 
-        if data_type == "vault":
-            print(data_path)
-            directory = get_dir_by_path(data_path)
-            if directory != None:
-                vault = get_vault_by_name(data_name, directory)
-                if vault != None:
-                    session_name = current_user.user_manager_id + current_user.username + current_user.get_id()
-                    vault_set = vaultset(decrypt(vault.vault_name, session[session_name+"key"], session[session_name+"iv"]).decode(), decrypt(vault.vault_username, session[session_name+"key"], session[session_name+"iv"]).decode(), decrypt(vault.vault_password, session[session_name+"key"], session[session_name+"iv"]).decode(), vault.id)
-                    return render_template("card.html", data=vault_set.data_set)
+        form = credit_card()
+        try:
+            session_name = current_user.user_manager_id + current_user.username + current_user.get_id()
+
+            if form.validate_on_submit():
+                if form.generate:
+                    new_pass = gen_Pass()
+                    directory = get_dir_by_path(data_path)
+                    if directory != None:
+                        vault = get_vault_by_name(data_name, directory)
+                        if vault != None:
+                            vault.vault_password = encrypt(new_pass.encode(), session[session_name+"key"], session[session_name+"iv"]).decode()
+                            db.session.commit()
+            del form
+
+            if data_type == "vault":
+                directory = get_dir_by_path(data_path)
+                if directory != None:
+                    vault = get_vault_by_name(data_name, directory)
+                    if vault != None:
+                        form = credit_card()
+                        vault_set = vaultset(decrypt(vault.vault_name, session[session_name+"key"], session[session_name+"iv"]).decode(), decrypt(vault.vault_username, session[session_name+"key"], session[session_name+"iv"]).decode(), decrypt(vault.vault_password, session[session_name+"key"], session[session_name+"iv"]).decode(), vault.id)
+                        return render_template("card.html", data=vault_set.data_set, form=form, return_value="/home?path="+data_path)
+            else:
+                directory = get_dir_by_path(data_path)
+                if directory != None:
+                    for file in directory.files:
+                        if str(file.file_name) == str(data_name):
+                            data_file = decrypt(file.file_data, session[session_name+"key"], session[session_name+"iv"])
+                            data_ext = decrypt(file.file_ext, session[session_name+"key"], session[session_name+"iv"]).decode()
+                            return Response(get_data(data_file, mimetypes.types_map["."+data_ext]), mimetype=mimetypes.types_map["."+data_ext])
+            return redirect(url_for("login"))
+        except KeyError as e:
+            return redirect(url_for('logout'))
     else:
         return redirect(url_for("login"))
 
@@ -274,10 +318,17 @@ def is_file(file_name):
 def delete():
     data_path = request.args.get('path')
     enc_name_file = request.args.get('enc_name')
+    data_type = request.args.get('type')
 
     dirs = current_user.directorys
     del_obj = data_path.split("/")[-1]
-    if enc_name_file != "folder":#file
+
+    if data_type == "vault":
+        directory = get_dir_by_path(data_path)
+        vault = get_vault_by_name(enc_name_file, directory)
+        db.session.delete(vault)
+        db.session.commit()
+    elif data_type != "folder" and data_type != "vault":
         for directory in dirs:
             if str(directory.dir_path) == str(data_path):
                 for file in directory.files:
@@ -293,7 +344,7 @@ def delete():
             if str(del_obj) == str(directory.dir_name):
                 db.session.delete(directory)
                 db.session.commit()
-    return redirect("/")
+    return index_path(data_path)
 
 @app.route("/logout")
 def logout():

@@ -23,9 +23,9 @@ def gen_String():
 #def gen_salt():
 #    return hashlib.sha256(os.urandom(60)).hexdigest().encode("ascii")
 
-def gen_Pass(max):
+def gen_Pass():
     chars = string.ascii_letters + string.digits + "!?()_"
-    return "".join(secrets.choice(chars) for i in range(gen.randint(30, max)))
+    return "".join(secrets.choice(chars) for i in range(gen.randint(20, 30)))
 
 def gen_Number():
     return gen.randint(20, 35)

@@ -7,6 +7,7 @@ from flask import Flask, session
 from flask_session import Session
 
 import secrets, os
+import mimetypes
 
 app = Flask(__name__)
 app.config.update(dict(
@@ -23,5 +24,6 @@ login_manager.login_view = 'login'
 login_manager.login_message_category = 'info'
 login_manager.session_protection = "strong"
 Session(app)
+mimetypes.init()
 
 from Vault.utils.app import *

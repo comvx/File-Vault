@@ -45,11 +45,11 @@
 			</form>
 			{% for data in data_set %}
 			{% if data.data == "" %}
-			<li class="folders"><a href="/home?path={{ data.href }}" title="{{ data.href }}" class="folders"><span class="icon folder full"></span><span class="name">{{ data.name }}</span> <span class="details">Folder</span></a><a class="delete_href" href="/delete?path={{ data.href }}&enc_name=folder"><span class="delete"></span></a></li>
+			<li class="folders"><a href="/home?path={{ data.href }}" title="{{ data.href }}" class="folders"><span class="icon folder full"></span><span class="name">{{ data.name }}</span> <span class="details">Folder</span></a><a class="delete_href" href="/delete?path={{ data.href }}&type={{ data.type }}"><span class="delete"></span></a></li>
 			{% elif data.type == "vault" %}
-			<li class="folders"><a onload="" href="{{ data.href }}" title="{{ data.href }}" class="folders"><span class="icon folder vault vault_item"></span><span class="name">{{ data.name }}</span> <span class="details">Folder</span></a><a class="delete_href" href="/delete?path={{ data.href }}&enc_name=folder"><span class="delete"></span></a></li>
+			<li class="folders"><a onload="" href="/open?path={{ data.path }}&name={{ data.enc_name }}&type=vault" title="{{ data.href }}" class="folders"><span class="icon folder vault vault_item"></span><span class="name">{{ data.name }}</span> <span class="details">Folder</span></a><a class="delete_href" href="/delete?path={{ data.path }}&enc_name={{ data.enc_name }}&type={{ data.type }}"><span class="delete"></span></a></li>
 			{% else %}
-			<li class="files"><a href="/home?path={{ data.href }}" title="{{ data.href }}" class="files"><span class="icon file f-{{ data.type }}">.{{ data.type }}</span><span class="name">{{ data.name }}</span> <span class="details">{{ data.data|length }} Bytes</span></a><a class="delete_href" href="/delete?path={{ data.path }}&enc_name={{ data.enc_name }}"><span class="delete"></span></a></li>
+			<li class="files"><a href="/open?path={{ data.path }}&name={{ data.enc_name }}&type={{ data.type }}" title="{{ data.href }}" class="files"><span class="icon file f-{{ data.type }}">.{{ data.type }}</span><span class="name">{{ data.name }}</span> <span class="details">{{ data.data|length }} Bytes</span></a><a class="delete_href" href="/delete?path={{ data.path }}&enc_name={{ data.enc_name }}&type={{ data.type }}"><span class="delete"></span></a></li>
 			{% endif %}
 		{% endfor %}
 		</ul>

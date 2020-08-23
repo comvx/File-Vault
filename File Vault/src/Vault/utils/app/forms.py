@@ -20,3 +20,7 @@ class home_form():
         vault_username = StringField("Vault username")
         vault_password = StringField("Vault password")
         submit = SubmitField('Create')
+class credit_card(FlaskForm):
+    password = StringField("Vault password")
+    generate = SubmitField('Generate')
+    submit = SubmitField('Create')
