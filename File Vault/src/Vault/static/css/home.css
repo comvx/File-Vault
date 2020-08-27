@@ -8,6 +8,7 @@
 *{
 	margin:0;
 	padding:0;
+	-webkit-appearance: none!important;
 }
 
 
@@ -229,14 +230,13 @@ form{
 }
 
 .filemanager .nothingfound {
-	background-color: #373743;
-	width: 23em;
-	height: 21em;
-	margin: 0 auto;
-	display: none;
-	font-family: Arial;
-	-webkit-animation: showSlowlyElement 700ms; /* Chrome, Safari, Opera */
-	animation: showSlowlyElement 700ms; /* Standard syntax */
+    width: 23em;
+    height: 21em;
+    margin: 0 auto;
+    font-family: Arial;
+    -webkit-animation: showSlowlyElement 700ms;
+    animation: showSlowlyElement 700ms;
+    margin-top: 10%;
 }
 
 .filemanager .nothingfound .nofiles {
@@ -244,7 +244,7 @@ form{
 	top: 3em;
 	border-radius: 50%;
 	position:relative;
-	background-color: #d72f6e;
+	background-color: #d72f42;
 	width: 11em;
 	height: 11em;
 	line-height: 11.4em;

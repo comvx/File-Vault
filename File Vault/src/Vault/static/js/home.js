@@ -8,10 +8,10 @@ function next_input(){
     console.log(vault_name.style.display);
     console.log(vault_password.style.display);
 
-    if(vault_name.style.display == "inline" && vault_username.style.display == "none" && vault_password.style.display == "none"){
+    if(vault_name.style.display == "inline" && vault_username.style.display == "none" && vault_password.style.display == "none" && vault_name.value != ""){
         vault_name.style.display = "none";
         vault_username.style.display = "inline";
-    }else if(vault_name.style.display == "none" && vault_username.style.display == "inline" && vault_password.style.display == "none"){
+    }else if(vault_name.style.display == "none" && vault_username.style.display == "inline" && vault_password.style.display == "none" && vault_username.value != ""){
         vault_next.style.display = "none";
         vault_username.style.display = "none";
         vault_password.style.display = "inline";

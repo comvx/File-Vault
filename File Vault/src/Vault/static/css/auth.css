@@ -177,6 +177,7 @@ select:-webkit-autofill:focus {
 
 }
 .alert {
+  font-size: 14px;
   position: relative;
   padding: .75rem 1.25rem;
   margin-top: 4rem;

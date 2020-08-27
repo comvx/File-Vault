@@ -7,7 +7,7 @@ $('input[type="submit"]').click(function(){
   setTimeout(function(){
     $(".authent").show().animate({right:0, top:0},{easing : 'easeOutQuint' ,duration: 600, queue: false });
     $(".authent").animate({opacity: 0},{duration: 200, queue: false }).addClass('visible');
-  },2000);
+  },1500);
 });
 $('input[type="text"],input[type="password"]').keyup(function(){
   if(!$(this).val() == ''){

@@ -1,6 +1,8 @@
 import os, sys
 import secrets
 import json, time
+import base64
+import uuid
 
 from flask import render_template, url_for, flash, redirect, request, abort, make_response, Response
 from flask_login import login_user, current_user, logout_user, login_required
@@ -8,7 +10,7 @@ from flask_mail import Message
 
 from werkzeug.utils import secure_filename
 
-from Vault.utils.authentication.database.table import User, File, Directory, Vault
+from Vault.utils.authentication.database.table import User, File, Directory, Vault, Share
 from Vault.utils.app import *
 from Vault.utils.app.forms import auth, data_upload, home_form, credit_card
 from Vault.utils.cryptographie import hash, encrypt, decrypt
@@ -28,6 +30,7 @@ def create_tables():
 @app.route("/")
 def index():
     if current_user.is_authenticated:
+        print("test3")
         return redirect("/home?path=")
     else:
         return redirect(url_for('login'))
@@ -71,7 +74,7 @@ def register():
 
             return redirect(url_for('index'))
         else:
-            return render_template('register.html', form=form, style_bg_status=style_bg_status_red)
+            return render_template('register.html', form=form, style_bg_status=style_bg_status_red, message="Username does already exists!")
     return render_template('register.html', form=form, style_bg_status=style_bg_status_blue)
 
 @app.route("/login", methods=['GET', 'POST'])
@@ -93,54 +96,62 @@ def login():
             user = User.query.filter_by(user_manager_id=user_manager_id, username=hashed_username, master_password=hashed_master_password).first()
             if user:
                 login_user(user, remember=True)
-
                 session_name = current_user.user_manager_id + current_user.username + current_user.get_id()
                 session[session_name+"salt"] = secret_key[16:]
                 session[session_name+"iv"] = secret_key[0:16]
                 session[session_name+"key"] = authentication.gen_key(secret_key, session[session_name+"salt"])
-
+                print("test")
                 del hashed_username
                 del hashed_master_password
                 del user
 
-                time.sleep(2.2)
+                time.sleep(1.7)
+                print("test2")
                 return redirect(url_for('index'))
             else:
-                time.sleep(2.2)
+                time.sleep(1.7)
                 return render_template('login.html', form=form, style_bg_status=style_bg_status_red, message="Wrong username and/or password")
         except Exception as identifier:
-            time.sleep(2.2)
+            time.sleep(1.7)
             return render_template('login.html', form=form, style_bg_status=style_bg_status_red, message="Wrong username and/or password")
     return render_template('login.html', form=form, style_bg_status=style_bg_status_blue)
 
 def transform_dataset(absolute_path):
-    dirs = current_user.directorys
+    if current_user.is_authenticated:
+        dirs = current_user.directorys
 
-    output = list()
-    try:
-        for directory in dirs:
-            if str(directory.dir_path) == str(absolute_path):
-                session_name = current_user.user_manager_id + current_user.username + current_user.get_id()
-                for file in directory.files:
-                    data_set = dataset(decrypt(file.file_name, session[session_name+"key"], session[session_name+"iv"]).decode(), decrypt(file.file_ext, session[session_name+"key"], session[session_name+"iv"]).decode(), directory.dir_path, file.file_data, directory.dir_path+"/"+file.file_name, file.file_name)
-                    output.append(data_set.data_set)
-                for vault in directory.vaults:
-                    data_set = dataset(decrypt(vault.vault_name, session[session_name+"key"], session[session_name+"iv"]).decode(), "vault", directory.dir_path, "::", directory.dir_path + "/" + vault.vault_name, vault.vault_name)
-                    output.append(data_set.data_set)
-            if directory.dir_path.count("/") > absolute_path.count("/") and directory.dir_path.startswith(absolute_path):
-                if absolute_path.count("/") > 0:
-                    if directory.dir_path.split("/")[1] == absolute_path.split("/")[1]:
-                        child_dir = directory.dir_path.replace(absolute_path, "", 1)
-                        if len(child_dir.split("/")) == 2:
-                            data_set = dataset(directory.dir_name, "folder", directory.dir_path, "", directory.dir_path, "")
-                            output.append(data_set.data_set)
-                else:
-                    if directory.dir_path.count("/") < 2:
-                        data_set = dataset(directory.dir_name, "folder", directory.dir_path, "", directory.dir_path, "")
-                        output.append(data_set.data_set)
-    except KeyError as e:
-        return redirect(url_for('logout'))
-    return output
+        output = list()
+        try:
+            for directory in dirs:
+                try:
+                    if str(directory.dir_path) == str(absolute_path):
+                        session_name = current_user.user_manager_id + current_user.username + current_user.get_id()
+                        for file in directory.files:
+                            if "//share_tmp_file" not in decrypt(file.file_name, session[session_name+"key"], session[session_name+"iv"]).decode():
+                                data_set = dataset(decrypt(file.file_name, session[session_name+"key"], session[session_name+"iv"]).decode(), decrypt(file.file_ext, session[session_name+"key"], session[session_name+"iv"]).decode(), directory.dir_path, file.file_data, directory.dir_path+"/"+file.file_name, file.file_name, "")
+                                output.append(data_set.data_set)
+                        for vault in directory.vaults:
+                            if "//share_tmp_file" not in decrypt(file.file_name, session[session_name+"key"], session[session_name+"iv"]).decode():
+                                data_set = dataset(decrypt(vault.vault_name, session[session_name+"key"], session[session_name+"iv"]).decode(), "vault", directory.dir_path, "::", directory.dir_path + "/" + vault.vault_name, vault.vault_name, "")
+                                output.append(data_set.data_set)
+                    if directory.dir_path.count("/") > absolute_path.count("/") and directory.dir_path.startswith(absolute_path):
+                        if absolute_path.count("/") > 0:
+                            if directory.dir_path.split("/")[1] == absolute_path.split("/")[1]:
+                                child_dir = directory.dir_path.replace(absolute_path, "", 1)
+                                if len(child_dir.split("/")) == 2:
+                                    data_set = dataset(directory.dir_name, "folder", directory.dir_path, "", directory.dir_path, "", directory.file_count)
+                                    output.append(data_set.data_set)
+                        else:
+                            if directory.dir_path.count("/") < 2:
+                                data_set = dataset(directory.dir_name, "folder", directory.dir_path, "", directory.dir_path, "", directory.file_count)
+                                output.append(data_set.data_set)
+                except Exception as e:
+                    pass
+        except KeyError as e:
+            return redirect(url_for('logout'))
+        return output
+    else:
+        return redirect("/")
 
 def check_for_twice_name(path, name):
     dirs = current_user.directorys
@@ -154,6 +165,12 @@ def duplicates(folder_name, current_path):
     new_path = current_path+"/"+folder_name
     for directory in dirs:
         if str(directory.dir_path) == str(new_path):
+            return False
+    return True
+
+def check_validator(fields):
+    for field in fields:
+        if field == "" or field == " ":
             return False
     return True
 
@@ -180,20 +197,27 @@ def home():
                         db.session.commit()
         if vault_add.validate_on_submit():
             if vault_add.submit:
-                try:
-                    session_name = current_user.user_manager_id + current_user.username + current_user.get_id()
-                    directory = get_dir_by_path(calling_path)
-                    if directory != None:
-                        new_vault = Vault(vault_name=encrypt(vault_add.vault_name.data.encode(), session[session_name+"key"], session[session_name+"iv"]).decode(), vault_username=encrypt(vault_add.vault_username.data.encode(), session[session_name+"key"], session[session_name+"iv"]).decode(), vault_password=encrypt(vault_add.vault_password.data.encode(), session[session_name+"key"], session[session_name+"iv"]).decode())
-                        directory.vaults.append(new_vault)
-                        db.session.commit()
-                except KeyError as e:
-                    return redirect(url_for('logout'))
+                if check_validator({vault_add.vault_name.data, vault_add.vault_username.data}):
+                    try:
+                        session_name = current_user.user_manager_id + current_user.username + current_user.get_id()
+                        directory = get_dir_by_path(calling_path)
+                        if directory != None:
+                            new_vault = Vault(vault_name=encrypt(vault_add.vault_name.data.encode(), session[session_name+"key"], session[session_name+"iv"]).decode(), vault_username=encrypt(vault_add.vault_username.data.encode(), session[session_name+"key"], session[session_name+"iv"]).decode(), vault_password=encrypt(vault_add.vault_password.data.encode(), session[session_name+"key"], session[session_name+"iv"]).decode())
+                            directory.vaults.append(new_vault)
+                            directory.file_count += 1
+                            db.session.commit()
+                    except KeyError as e:
+                        return redirect(url_for('logout'))
 
         dataset = transform_dataset(calling_path)
 
         calling_path_splitter = calling_path.split("/")
-        return render_template('home.html', data_set=dataset, home_add=home_add, current_folder_path=absolute_path, current_folders=calling_path_splitter, current_folder_href=calling_path, vault_add=vault_add)
+        if type(dataset) == Response:
+            return dataset
+        if len(dataset) < 1:
+            return render_template('home.html', data_set=dataset, home_add=home_add, current_folder_path=absolute_path, current_folders=calling_path_splitter, current_folder_href=calling_path, vault_add=vault_add, nothingfound="block")
+        else:
+            return render_template('home.html', data_set=dataset, home_add=home_add, current_folder_path=absolute_path, current_folders=calling_path_splitter, current_folder_href=calling_path, vault_add=vault_add, nothingfound="none")
     else:
         return redirect(url_for("login"))
 
@@ -223,6 +247,7 @@ def upload():
                             
                             new_file = File(file_name=encrypt(file_name.encode(), session[session_name+"key"], session[session_name+"iv"]).decode(), file_ext=encrypt(file_ext.encode(), session[session_name+"key"], session[session_name+"iv"]).decode(), file_data=file_contents.decode())
                             directory.files.append(new_file)
+                            directory.file_count += 1
                             db.session.commit()
                         time.sleep(5)
                         return index_path(calling_path)
@@ -237,15 +262,6 @@ def get_vault_by_name(vault_name, dir):
         if str(vault.vault_name) == str(vault_name):
             return vault
     return None
-
-def get_data(data, ptype):
-    length = str(len(data)).encode()
-    while True:
-        yield(b'--frame\r\n'
-              b'Content-Type: ' + ptype.encode() + b'\r\n'
-              b'Content-Length: ' + length + b'\r\n'
-              b'\r\n'+ data + b'\r\n')
-        time.sleep(0.01)
 
 @app.route("/open", methods=['GET', 'POST'])
 def open():
@@ -284,12 +300,105 @@ def open():
                         if str(file.file_name) == str(data_name):
                             data_file = decrypt(file.file_data, session[session_name+"key"], session[session_name+"iv"])
                             data_ext = decrypt(file.file_ext, session[session_name+"key"], session[session_name+"iv"]).decode()
-                            return Response(get_data(data_file, mimetypes.types_map["."+data_ext]), mimetype=mimetypes.types_map["."+data_ext])
+
+                            #return render_template("open.html", data=response_1)
+                            return Response(data_file, mimetype=mimetypes.types_map["."+data_ext])
             return redirect(url_for("login"))
         except KeyError as e:
             return redirect(url_for('logout'))
     else:
         return redirect(url_for("login"))
+
+def convert_to_path(filePath):
+    index = filePath.rindex("/")
+    return filePath[0:index]
+
+def get_file_from_dir(dir, file_name):
+    for file in dir.files:
+        if str(file_name) == str(file.file_name):
+            return file
+    return None
+
+def valid_uuid(uuid):
+    users = User.query.all()
+    for user in users:
+        for share in user.shares:
+            if str(share.uuid) == str(uuid):
+                return valid_uuid(uuid.uuid4())
+    return uuid
+
+def get_share_item(uuid):
+    for user in User.query.all():
+        for share in user.shares:
+            if str(share.uuid) == str(uuid):
+                return share, user
+    return None
+
+def get_dir_by_path_diff_user(path, user):
+    dirs = user.directorys
+    for directory in dirs:
+        if str(directory.dir_path) == str(path):
+            return directory
+    return None
+
+@app.route("/share", methods=['GET', 'POST'])
+def share():
+    action = request.args.get('a')
+    if action == "use":
+        uuid_client = request.args.get('uuid')
+        share_item = get_share_item(uuid_client)
+        if share_item != None:
+            if str(uuid_client) == str(share_item[0].uuid):
+                dir_path = convert_to_path(share_item[0].href)
+                dest_dir = get_dir_by_path_diff_user(convert_to_path(share_item[0].href), share_item[1])
+                if dest_dir != None:
+                    file = get_file_from_dir(dest_dir, share_item[0].href.split("/")[-1])
+                    db.session.delete(share_item[0])
+                    db.session.commit()
+                    return share_open(file, uuid_client)
+    elif action == "create":
+        if current_user.is_authenticated:
+            focused_file_path = request.args.get('file_path')
+            focused_file_path_dir = convert_to_path(focused_file_path)
+            if focused_file_path_dir != None:
+                dest_dir = get_dir_by_path(focused_file_path_dir)
+                if dest_dir != None:
+                    focused_file = get_file_from_dir(dest_dir, focused_file_path.split("/")[-1])
+                    if focused_file != None:
+                        created_uuid = valid_uuid(uuid.uuid4())
+
+                        iv = pad(str(created_uuid), 20).encode()
+
+                        session_name = current_user.user_manager_id + current_user.username + current_user.get_id()
+
+                        original_file_name = decrypt(focused_file.file_name.encode(), session[session_name+"key"], session[session_name+"iv"]).decode()
+                        original_file_ext = decrypt(focused_file.file_ext.encode(), session[session_name+"key"], session[session_name+"iv"]).decode() + "//share_tmp_file"
+                        original_file_data = decrypt(focused_file.file_data.encode(), session[session_name+"key"], session[session_name+"iv"]).decode()
+
+                        share_file_name = encrypt(original_file_name.encode(), str(created_uuid), iv).decode()
+
+                        copy_share_file = new_file = File(file_name=share_file_name, file_ext=encrypt(original_file_ext.encode(), str(created_uuid), iv).decode(), file_data=encrypt(original_file_data.encode(), str(created_uuid), iv).decode())
+
+                        dest_dir.files.append(copy_share_file)
+                        new_share = Share(uuid=str(created_uuid), href=focused_file_path_dir+"/"+share_file_name, user=current_user)
+                        db.session.add(new_share)
+                        db.session.commit()
+                        return redirect("/")
+    return "FUCK YOU!"
+
+@app.route("/share_open")
+def share_open(file, uuid):
+    iv = pad(str(uuid), 20).encode()
+
+    file_name = decrypt(file.file_name.encode(), str(uuid), iv).decode()
+    file_ext = decrypt(file.file_ext.encode(), str(uuid), iv).decode().replace("//share_tmp_file", "")
+    file_data = decrypt(file.file_data.encode(), str(uuid), iv)
+
+    db.session.delete(file)
+    db.session.commit()
+
+    return Response(file_data, mimetype=mimetypes.types_map["."+file_ext])
+
 
 def delete_childs(absolute_path):
     dirs = current_user.directorys
@@ -349,4 +458,5 @@ def delete():
 @app.route("/logout")
 def logout():
     logout_user()
+    
     return redirect(url_for("home"))

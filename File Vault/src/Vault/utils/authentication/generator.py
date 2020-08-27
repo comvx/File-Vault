@@ -6,6 +6,7 @@ import os
 import hashlib
 import string
 import secrets
+import base64
 
 from binascii import hexlify
 
@@ -36,3 +37,6 @@ def gen_user_id(username):
 
 def gen_vault_key(iv, iter, username):
     return hash(gen_Pass(len(username) * len(username)), iter, salt)
+
+def gen_secret_key(iv, salt):
+    return base64.b64encode(iv.decode()+salt.decode()).decode()
