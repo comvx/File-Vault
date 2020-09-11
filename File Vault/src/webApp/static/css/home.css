@@ -1,0 +1,649 @@
+@charset "utf-8";
+
+
+/*-------------------------
+	Simple reset
+--------------------------*/
+
+*{
+	margin:0;
+	padding:0;
+	-webkit-appearance: none!important;
+}
+
+
+/*-------------------------
+	Demo page
+-------------------------*/
+
+body {
+	background: rgb(34,34,34);
+	font: 14px normal Arial, Helvetica, sans-serif;
+	z-index: -4;
+}
+
+form{
+}
+
+
+/*-------------------------
+	File manager
+-------------------------*/
+
+
+.filemanager {
+	width: 95%;
+	max-width:1340px;
+	position: relative;
+	margin: 100px auto 50px;
+}
+
+@media all and (max-width: 965px) {
+	.filemanager {
+		margin: 30px auto 0;
+		padding: 1px;
+	}
+}
+
+
+/*-------------------------
+	Breadcrumps
+-------------------------*/
+
+
+.filemanager .breadcrumbs {
+	color: #ffffff;
+	margin-left:20px;
+	font-size: 24px;
+	font-weight: 700;
+	line-height: 35px;
+}
+
+.filemanager .breadcrumbs a:link, .breadcrumbs a:visited {
+	color: #ffffff;
+	text-decoration: none;
+}
+
+.filemanager .breadcrumbs a:hover {
+	text-decoration: underline;
+}
+
+.filemanager .breadcrumbs .arrow {
+	color:  #6a6a72;
+	font-size: 24px;
+	font-weight: 700;
+	line-height: 20px;
+}
+
+
+/*-------------------------
+	Search box
+-------------------------*/
+.alert{
+  width:22%;
+  height: auto;
+  opacity: 0.75;
+  margin:20px auto;
+  padding:30px;
+  position:relative;
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 700;
+  border-radius:25px;
+  margin-top: 15%;
+  word-break: break-all;
+}
+.close{
+  position:absolute;
+  width:30px;
+  height:30px;
+  opacity:0.5;
+  right:15px;
+  top:25px;
+  text-align:center;
+  font-size:1.6em;
+  cursor:pointer;
+}
+.success-alert{
+    background-color:#131516;
+}
+.close{
+	border-color:#ffffff;
+	color:#ffffff;
+  }
+.filemanager .upload {
+	position: absolute;
+	padding-right: 30px;
+	cursor: pointer;
+	right: 0;
+	font-size: 17px;
+	color: #ffffff;
+	display: block;
+	width: 40px;
+	height: 40px;
+	top: -14px;
+}
+.share{
+	background-image: url("/static/images/share.png")!important;
+    border: none!important;
+    background-repeat: no-repeat!important;
+    background-size: 30px!important;
+    height: 28px;
+	border-radius: 0px!important;
+	background-color: transparent;
+	width: 28px;
+    position: inherit;
+    margin-left: -31px;
+	margin-top: -28px!important;
+	border: none!important;
+}
+.share:focus{
+	border-color: transparent!important;
+	border: none!important;
+	box-shadow: none!important;
+	outline:none!important;
+}
+.download:focus{
+	outline:none!important;
+	border: none!important;
+	box-shadow: none!important;
+}
+.download{
+	color: #929292;
+	font-size: 21px;
+	position: absolute;
+	margin-top: -22px;
+	margin-left: 2px;
+	background-color: transparent!important;
+	border: none!important;
+}
+.deletefolder{
+	position: absolute;
+    padding-right: 30px;
+    cursor: pointer;
+    right: 0;
+    font-size: 17px;
+    color: #ffffff;
+    display: block;
+    width: 40px;
+    height: 40px;
+}
+
+.folder_name{
+	padding-left: 10px;
+	background-color: #2d2d2d;
+	border-radius: 50px!important;
+	width: 135px;
+	height: 25px;
+	border: none;
+	outline: none;
+	color: #ffffff;
+	-webkit-appearance: none!important;
+}
+.folder_name::placeholder {
+	color: rgb(167, 167, 167);
+}
+.vault_name{
+	display: inline;
+}
+.vault_username{
+	display: none;
+}
+.vault_password{
+	display: none;
+}
+.vault_submit{
+	display: none;
+}
+
+::-webkit-input-placeholder { /* WebKit browsers */
+	color:    #4d535e;
+}
+:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+	color:    #4d535e;
+	opacity:  1;
+}
+::-moz-placeholder { /* Mozilla Firefox 19+ */
+	color:    #4d535e;
+	opacity:  1;
+}
+:-ms-input-placeholder { /* Internet Explorer 10+ */
+	color:    #4d535e;
+}
+::-moz-focus-inner{
+	border: none;
+	outline: none;
+}
+
+
+/*-------------------------
+	Content area
+-------------------------*/
+
+.filemanager .data {
+	margin-top: 60px;
+	z-index: -3;
+}
+
+.filemanager .data.animated {
+	-webkit-animation: showSlowlyElement 700ms; /* Chrome, Safari, Opera */
+	animation: showSlowlyElement 700ms; /* Standard syntax */
+}
+
+.filemanager .data li {
+	border-radius: 3px;
+    background-color: rgb(30 30 30 / 1);
+    width: 307px;
+    height: 118px;
+    list-style-type: none;
+    margin: 10px;
+    display: inline-block;
+    position: relative;
+    overflow: hidden;
+    padding: 0.3em;
+    z-index: 1;
+    cursor: pointer;
+    box-sizing: border-box;
+    transition: 0.3s background-color;
+    box-shadow: 0 0 13px 0px rgb(37 37 37 / 1);
+}
+.filemanager .data li:hover > .delete_href {
+	opacity: 1;
+}
+.filemanager .data li:hover {
+	background-color:  rgb(45 45 45);
+
+}
+@media only screen and (hover: none) and (pointer: coarse){
+    .delete_href {
+		opacity: 1!important;
+	}
+}
+.add_folder:hover{
+	background-color: rgb(30 30 30 / 1)!important;
+}
+.add_vault:hover{
+	background-color: rgb(30 30 30 / 1)!important;
+}
+
+.filemanager .data li a {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+}
+
+.filemanager .data li .name {
+	color: #ffffff;
+	font-size: 15px;
+	font-weight: 700;
+	line-height: 20px;
+	width: 150px;
+	white-space: nowrap;
+	display: inline-block;
+	position: absolute;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	top: 40px;
+}
+
+.filemanager .data li .details {
+	color: #b6c1c9;
+	font-size: 13px;
+	font-weight: 400;
+	width: 55px;
+	height: 10px;
+	top: 64px;
+	white-space: nowrap;
+	position: absolute;
+	display: inline-block;
+}
+
+.filemanager .nothingfound {
+    width: 23em;
+    height: 21em;
+    margin: 0 auto;
+    font-family: Arial;
+    -webkit-animation: showSlowlyElement 700ms;
+    animation: showSlowlyElement 700ms;
+    margin-top: 10%;
+}
+
+.filemanager .nothingfound .nofiles {
+	margin: 30px auto;
+	top: 3em;
+	border-radius: 50%;
+	position:relative;
+	background-color: #d72f42;
+	width: 11em;
+	height: 11em;
+	line-height: 11.4em;
+}
+.filemanager .nothingfound .nofiles:after {
+	content: '×';
+	position: absolute;
+	color: #ffffff;
+	font-size: 14em;
+	margin-right: 0.092em;
+	right: 0;
+}
+
+.filemanager .nothingfound span {
+	margin: 0 auto auto 6.8em;
+	color: #ffffff;
+	font-size: 16px;
+	font-weight: 700;
+	line-height: 20px;
+	height: 13px;
+	position: relative;
+	top: 2em;
+}
+
+.btn{
+	border-radius: 50px!important;
+    background: transparent!important;
+    padding: 6px 10px!important;
+    border: 2px solid #e4d8db!important;
+    color: #e4d8db!important;
+    text-transform: lowercase!important;
+    font-size: 13px!important;
+    margin-top: 10px!important;
+    width: 83px;
+	margin-left: 45%;
+	cursor: pointer;
+}
+.btn:focus{
+	outline: none;
+}
+.btn:hover{
+	border: 2px solid rgb(188 176 176 / 1)!important;
+    color: rgb(188 176 176 / 1)!important;
+}
+
+@media all and (max-width:965px) {
+
+	.filemanager .data li {
+		width: 100%;
+		margin: 5px 0;
+	}
+
+}
+
+/* Chrome, Safari, Opera */
+@-webkit-keyframes showSlowlyElement {
+	100%   	{ transform: scale(1); opacity: 1; }
+	0% 		{ transform: scale(1.2); opacity: 0; }
+}
+
+/* Standard syntax */
+@keyframes showSlowlyElement {
+	100%   	{ transform: scale(1); opacity: 1; }
+	0% 		{ transform: scale(1.2); opacity: 0; }
+}
+
+
+/*-------------------------
+		Icons
+-------------------------*/
+
+.icon {
+	font-size: 23px;
+}
+.icon.folder {
+	display: inline-block;
+	margin: 1em;
+	background-color: transparent;
+	overflow: hidden;
+}
+.icon.folder:before {
+	content: '';
+	float: left;
+	background-color: #7ba1ad;
+
+	width: 1.5em;
+	height: 0.45em;
+
+	margin-left: 0.07em;
+	margin-bottom: -0.07em;
+
+	border-top-left-radius: 0.1em;
+	border-top-right-radius: 0.1em;
+
+	box-shadow: 1.25em 0.25em 0 0em #7ba1ad;
+}
+.icon.folder:after {
+	content: '';
+	float: left;
+	clear: left;
+
+	background-color: #a0d4e4;
+	width: 3em;
+	height: 2.25em;
+
+	border-radius: 0.1em;
+}
+.icon.folder.full:before {
+	height: 0.55em;
+}
+.icon.folder.full:after {
+	height: 2.15em;
+	box-shadow: 0 -0.12em 0 0 #ffffff;
+}
+.icon.folder.add::before{
+	background-color: #9ccc8e;
+	box-shadow: 1.25em 0.25em 0 0em #9ccc8e;
+}
+.icon.folder.add::after {
+	background-color: #b0e4a0;
+	content: "+";
+	display:flex;
+	flex-direction:row;
+	align-items:center;
+	justify-content:center;
+	font-weight:bold;
+	font-family:courier;
+	color:white;
+}
+.icon.folder.vault::before{
+	background-color: #4e4e4e;
+	box-shadow: 1.25em 0.25em 0 0em #4e4e4e;
+}
+.icon.folder.vault::after{
+	background-color: #6b6b6b;
+	background-image: url("/static/images/lock.png");
+	background-size: 30px;
+	background-position-x: 50%;
+	background-position-y: 50%;
+	background-repeat: no-repeat;
+	display:flex;
+	flex-direction:row;
+	align-items:center;
+	justify-content:center;
+	font-weight:bold;
+	font-family:courier;
+	color:white;
+}
+
+.vault_item{
+
+}
+
+.icon.file {
+	width: 2.5em;
+	height: 3em;
+	line-height: 3em;
+	text-align: center;
+	border-radius: 0.25em;
+	color: #FFF;
+	display: inline-block;
+	margin: 0.9em 1.2em 0.8em 1.3em;
+	position: relative;
+	overflow: hidden;
+	box-shadow: 1.74em -2.1em 0 0 #A4A7AC inset;
+}
+.icon.file:first-line {
+	font-size: 13px;
+	font-weight: 700;
+}
+.icon.file:after {
+	content: '';
+	position: absolute;
+	z-index: -1;
+	border-width: 0;
+	border-bottom: 2.6em solid #DADDE1;
+	border-right: 2.22em solid rgba(0, 0, 0, 0);
+	top: -34.5px;
+	right: -4px;
+}
+.delete_href{
+	opacity: 0;
+	width: 20px!important;
+	height: 20px!important;
+	position: absolute!important;
+	right: 5px!important;
+	top: 5px!important;
+	left: 92%!important;
+	background-image: url(/static/images/settings.png);
+	background-size: 20px;
+}
+.settings{
+    width: 100%;
+    height: 100%;
+    position: absolute;
+	margin-left: 30px;
+    padding-top: 32px;
+}
+.save_new_name{
+	margin-left: -5px!important;
+}
+.new_folder_name{
+	visibility: visible;
+	background-color: transparent!important;
+    border-bottom: solid #3e3e3e 2px;
+    border-radius: 0px!important;
+    position: absolute;
+    margin-left: -120px;
+    margin-top: 14px;
+}
+.delete_href:hover{
+	opacity: 1;
+}
+
+
+.icon.file.f-avi,
+.icon.file.f-flv,
+.icon.file.f-mkv,
+.icon.file.f-mov,
+.icon.file.f-mpeg,
+.icon.file.f-mpg,
+.icon.file.f-mp4,
+.icon.file.f-m4v,
+.icon.file.f-wmv {
+	box-shadow: 1.74em -2.1em 0 0 #7e70ee inset;
+}
+.icon.file.f-avi:after,
+.icon.file.f-flv:after,
+.icon.file.f-mkv:after,
+.icon.file.f-mov:after,
+.icon.file.f-mpeg:after,
+.icon.file.f-mpg:after,
+.icon.file.f-mp4:after,
+.icon.file.f-m4v:after,
+.icon.file.f-wmv:after {
+	border-bottom-color: #5649c1;
+}
+
+.icon.file.f-mp2,
+.icon.file.f-mp3,
+.icon.file.f-m3u,
+.icon.file.f-wma,
+.icon.file.f-xls,
+.icon.file.f-xlsx {
+	box-shadow: 1.74em -2.1em 0 0 #5bab6e inset;
+}
+.icon.file.f-mp2:after,
+.icon.file.f-mp3:after,
+.icon.file.f-m3u:after,
+.icon.file.f-wma:after,
+.icon.file.f-xls:after,
+.icon.file.f-xlsx:after {
+	border-bottom-color: #448353;
+}
+
+.icon.file.f-doc,
+.icon.file.f-docx,
+.icon.file.f-psd,
+.icon.file.f-txt{
+	box-shadow: 1.74em -2.1em 0 0 #03689b inset;
+}
+
+.icon.file.f-doc:after,
+.icon.file.f-docx:after,
+.icon.file.f-psd:after,
+.icon.file.f-txt:after {
+	border-bottom-color: #2980b9;
+}
+
+.icon.file.f-gif,
+.icon.file.f-jpg,
+.icon.file.f-jpeg,
+.icon.file.f-pdf,
+.icon.file.f-png {
+	box-shadow: 1.74em -2.1em 0 0 #e15955 inset;
+}
+.icon.file.f-gif:after,
+.icon.file.f-jpg:after,
+.icon.file.f-jpeg:after,
+.icon.file.f-pdf:after,
+.icon.file.f-png:after {
+	border-bottom-color: #c6393f;
+}
+
+.icon.file.f-deb,
+.icon.file.f-dmg,
+.icon.file.f-gz,
+.icon.file.f-rar,
+.icon.file.f-zip,
+.icon.file.f-7z {
+	box-shadow: 1.74em -2.1em 0 0 #867c75 inset;
+}
+.icon.file.f-deb:after,
+.icon.file.f-dmg:after,
+.icon.file.f-gz:after,
+.icon.file.f-rar:after,
+.icon.file.f-zip:after,
+.icon.file.f-7z:after {
+	border-bottom-color: #685f58;
+}
+
+.icon.file.f-html,
+.icon.file.f-rtf,
+.icon.file.f-xml,
+.icon.file.f-xhtml {
+	box-shadow: 1.74em -2.1em 0 0 #a94bb7 inset;
+}
+.icon.file.f-html:after,
+.icon.file.f-rtf:after,
+.icon.file.f-xml:after,
+.icon.file.f-xhtml:after {
+	border-bottom-color: #d65de8;
+}
+
+.icon.file.f-js {
+	box-shadow: 1.74em -2.1em 0 0 #d0c54d inset;
+}
+.icon.file.f-js:after {
+	border-bottom-color: #a69f4e;
+}
+
+.icon.file.f-css,
+.icon.file.f-saas,
+.icon.file.f-scss {
+	box-shadow: 1.74em -2.1em 0 0 #44afa6 inset;
+}
+.icon.file.f-css:after,
+.icon.file.f-saas:after,
+.icon.file.f-scss:after {
+	border-bottom-color: #30837c;
+}
