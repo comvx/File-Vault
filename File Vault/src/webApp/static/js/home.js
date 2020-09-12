@@ -21,23 +21,20 @@ function next_input(){
 function is_touch_device1() {
     return 'ontouchstart' in window;
   }
-function copyToClipboard(element) {
-    var text = element.text;
-    console.log(text);
-    var dummy = document.createElement("textarea");
-    document.body.appendChild(dummy);
-    dummy.value = text;
-    dummy.select();
-    document.execCommand("copy");
-    document.body.removeChild(dummy);
- }
+ function copyElementToClipboard(element) {
+    window.getSelection().removeAllRanges();
+    let range = document.createRange();
+    range.selectNode(typeof element === 'string' ? document.getElementById(element) : element);
+    window.getSelection().addRange(range);
+    document.execCommand('copy');
+    window.getSelection().removeAllRanges();
+  }
 document.addEventListener("DOMContentLoaded", function(event) { 
     var vault_name = document.getElementById("vault_name");
     var vault_username = document.getElementById("vault_username");
     var vault_password = document.getElementById("vault_password");
     var vault_submit = document.getElementById("vault_submit");
     var vault_next = document.getElementById("vault_next");
-    alert(is_touch_device1());
     try {
         vault_name.style.display = "inline";
         vault_username.style.display = "none";
@@ -46,9 +43,9 @@ document.addEventListener("DOMContentLoaded", function(event) {
      }
      catch (e) {
      }
-
+     var clipboard = new ClipboardJS('.click_share_url');
     if ((document.getElementById("message").text).indexOf("uuid") != -1){
-        copyToClipboard(document.getElementById("message"));
+        document.getElementById("click_share_url").click();
         document.getElementById("message").text = "Share url copied to clipboard!"
     }
 });
@@ -82,12 +79,6 @@ function rename_submit(index, href, type){
 
     window.location.href='/rename?path='+href+'&new_name='+input_new_folder_name.value+'&type='+type;    
 }
-
-document.getElementById("message").addEventListener("click", function() {
-    if ("uuid" in document.getElementById("message").text){
-        copyToClipboard(document.getElementById("message"));
-    }
-});
 
 $(".close").click(function() {
     $(this)

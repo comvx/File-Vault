@@ -395,61 +395,105 @@ def get_dir_by_path_diff_user(path, user):
 def share():
     action = request.args.get('a')
     if action == "use":
-        print("d")
         uuid_client = request.args.get('uuid')
+        uuid_type = request.args.get('type')
         share_item = get_share_item(uuid_client)
         if share_item != None:
             if str(uuid_client) == str(share_item[0].uuid):
                 dir_path = convert_to_path(share_item[0].href)
                 dest_dir = get_dir_by_path_diff_user(convert_to_path(share_item[0].href), share_item[1])
                 if dest_dir != None:
-                    file = get_file_from_dir(dest_dir, share_item[0].href.split("/")[-1])
-                    db.session.delete(share_item[0])
-                    db.session.commit()
-                    return share_open(file, uuid_client)
+                    if uuid_type == "vault":
+                        vault = get_vault_by_name(share_item[0].href.split("/")[-1] ,dest_dir)
+                        db.session.delete(share_item[0])
+                        db.session.commit()
+                        return share_open(vault, uuid_client, "vault")
+                    elif uuid_type == "file":
+                        file = get_file_from_dir(dest_dir, share_item[0].href.split("/")[-1])
+                        db.session.delete(share_item[0])
+                        db.session.commit()
+                        return share_open(file, uuid_client, "files")
     elif action == "create":
         if current_user.is_authenticated:
             focused_file_path = request.args.get('file_path')
+            focused_file_type = request.args.get('file_type')
             focused_file_path_dir = convert_to_path(focused_file_path)
             if focused_file_path_dir != None:
                 dest_dir = get_dir_by_path(focused_file_path_dir)
                 if dest_dir != None:
-                    focused_file = get_file_from_dir(dest_dir, focused_file_path.split("/")[-1])
-                    if focused_file != None:
-                        created_uuid = valid_uuid(uuid.uuid4())
+                    if focused_file_type == "vault":
+                        focused_vault = get_vault_by_name(focused_file_path.split("/")[-1], dest_dir)
+                        if focused_vault != None:
+                            created_uuid = valid_uuid(uuid.uuid4())
 
-                        iv = pad(str(created_uuid), 20).encode()
+                            iv = pad(str(created_uuid), 20).encode()
 
-                        session_name = current_user.user_manager_id + current_user.username + current_user.get_id()
+                            session_name = current_user.user_manager_id + current_user.username + current_user.get_id()
 
-                        original_file_name = decrypt(focused_file.file_name.encode(), session[session_name+"key"], session[session_name+"iv"]).decode()
-                        original_file_ext = decrypt(focused_file.file_ext.encode(), session[session_name+"key"], session[session_name+"iv"]).decode()
-                        original_file_data = decrypt(focused_file.file_data.encode(), session[session_name+"key"], session[session_name+"iv"])
+                            original_vault_name = decrypt(focused_vault.vault_name.encode(), session[session_name+"key"], session[session_name+"iv"]).decode()
+                            original_vault_username = decrypt(focused_vault.vault_username.encode(), session[session_name+"key"], session[session_name+"iv"]).decode()
+                            original_vault_password = decrypt(focused_vault.vault_username.encode(), session[session_name+"key"], session[session_name+"iv"]).decode()
 
-                        share_file_name = encrypt(original_file_name.encode(), str(created_uuid), iv).decode()
+                            share_vault_name = encrypt(original_vault_name.encode(), str(created_uuid), iv).decode()
 
-                        copy_share_file = new_file = File(file_name=share_file_name, file_ext=encrypt(original_file_ext.encode(), str(created_uuid), iv).decode(), file_data=encrypt(original_file_data, str(created_uuid), iv).decode(), file_share=True)
+                            copy_share_vault = new_file = Vault(vault_name=share_vault_name, vault_username=encrypt(original_vault_username.encode(), str(created_uuid), iv).decode(), vault_password=encrypt(original_vault_password.encode(), str(created_uuid), iv).decode(), vault_share=True)
 
-                        dest_dir.files.append(copy_share_file)
-                        new_share = Share(uuid=str(created_uuid), href=focused_file_path_dir+"/"+share_file_name, user=current_user)
-                        db.session.add(new_share)
-                        db.session.commit()
-                        flash("172.105.247.216/share?a=use&uuid="+str(created_uuid))
-                        return redirect("/")
-    return "FUCK YOU!"
+                            dest_dir.vaults.append(copy_share_vault)
+                            new_share = Share(uuid=str(created_uuid), href=focused_file_path_dir+"/"+share_vault_name, user=current_user)
+                            db.session.add(new_share)
+                            db.session.commit()
+                            flash("172.105.247.216/share?a=use&uuid="+str(created_uuid)+"&type=vault")
+                            return index_path(dest_dir.dir_path)
+                    elif focused_file_type == "file":
+                        focused_file = get_file_from_dir(dest_dir, focused_file_path.split("/")[-1])
+                        if focused_file != None:
+                            created_uuid = valid_uuid(uuid.uuid4())
+
+                            iv = pad(str(created_uuid), 20).encode()
+
+                            session_name = current_user.user_manager_id + current_user.username + current_user.get_id()
+
+                            original_file_name = decrypt(focused_file.file_name.encode(), session[session_name+"key"], session[session_name+"iv"]).decode()
+                            original_file_ext = decrypt(focused_file.file_ext.encode(), session[session_name+"key"], session[session_name+"iv"]).decode()
+                            original_file_data = decrypt(focused_file.file_data.encode(), session[session_name+"key"], session[session_name+"iv"])
+
+                            share_file_name = encrypt(original_file_name.encode(), str(created_uuid), iv).decode()
+
+                            copy_share_file = new_file = File(file_name=share_file_name, file_ext=encrypt(original_file_ext.encode(), str(created_uuid), iv).decode(), file_data=encrypt(original_file_data, str(created_uuid), iv).decode(), file_share=True)
+
+                            dest_dir.files.append(copy_share_file)
+                            new_share = Share(uuid=str(created_uuid), href=focused_file_path_dir+"/"+share_file_name, user=current_user)
+                            db.session.add(new_share)
+                            db.session.commit()
+                            flash("172.105.247.216/share?a=use&uuid="+str(created_uuid)+"&type=file")
+                            return index_path(dest_dir.dir_path)
+    return redirect(url_for("index"))
 
 @app.route("/share_open")
-def share_open(file, uuid):
+def share_open(item, uuid, share_type):
     iv = pad(str(uuid), 20).encode()
+    if share_type == "vault":
+        vault_name = decrypt(item.vault_name.encode(), str(uuid), iv).decode()
+        vault_username = decrypt(item.vault_username.encode(), str(uuid), iv).decode()
+        vault_password = decrypt(item.vault_password.encode(), str(uuid), iv).decode()
 
-    file_name = decrypt(file.file_name.encode(), str(uuid), iv).decode()
-    file_ext = decrypt(file.file_ext.encode(), str(uuid), iv).decode()
-    file_data = decrypt(file.file_data.encode(), str(uuid), iv)
+        db.session.delete(item)
+        db.session.commit()
 
-    db.session.delete(file)
-    db.session.commit()
+        vault_set = vaultset(vault_name, vault_username, vault_password, item.id)
+        form = credit_card()
 
-    return Response(file_data, mimetype=mimetypes.types_map["."+file_ext.lower()])
+        return render_template("card.html", data=vault_set.data_set, form=form, return_value="")
+    elif share_type == "file":
+        file_name = decrypt(item.file_name.encode(), str(uuid), iv).decode()
+        file_ext = decrypt(item.file_ext.encode(), str(uuid), iv).decode()
+        file_data = decrypt(item.file_data.encode(), str(uuid), iv)
+
+        db.session.delete(item)
+        db.session.commit()
+
+        return Response(file_data, mimetype=mimetypes.types_map["."+file_ext.lower()])
+    return redirect(url_for("index"))
 
 def get_all_files():
     dirs = current_user.directorys

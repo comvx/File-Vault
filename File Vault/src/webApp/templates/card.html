@@ -12,6 +12,7 @@
 
 </head>
 <body class="align bg" id="bg">
+  {% if return_value != "" %}
   <div id="cd-popup" class="cd-popup" role="alert">
       <div class="cd-popup-container">
         <p>Are you sure you want to generate a new password?</p>
@@ -26,6 +27,7 @@
       </div>
 	</div>
   <a href="{{ return_value }}" type="button" class="return" style="position: absolute;"><img class="return" src="/static/images/return.png"></a>
+  {% endif %}
   <div class="grid align__item">
     <div class="card">
 
@@ -41,8 +43,10 @@
           <label for="card__number" class="card__number__label">Vault Password</label>
           {{ form.password(type="text", id="card__number", class="card__number__input", value=data.password) }}
           <div class="value-container">
-            <button type="button" onclick="copyToClipboard('card__number')" class="field-button">Copy</button>
+            <button type="button"class="field-button copy" onclick="show_alert()" data-clipboard-text="{{ data.password }}">Copy</button>
+            {% if return_value != "" %}
             <button type="button" onclick="show_popup()" class="field-button">Generate</button>
+            {% endif %}
           </div>
         </div>
 
@@ -70,11 +74,15 @@
         </div>
 
       </form>
-
     </div>
+    <div id="alert" class="alert success-alert" style="display: none;">
+      <a type="button" id="message">Password copied!</a>
+      <a class="close">&times;</a>
+      </div>
   </div>
 </body>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
 <script  src="/static/js/cards.js"></script>
+<script src="/static/js/clipboard.min.js"></script>
 </html>

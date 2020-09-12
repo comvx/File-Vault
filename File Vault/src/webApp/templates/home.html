@@ -66,13 +66,13 @@
 			{% endif %}
 			{% elif data_set[index].type == "vault" %}
 			<li class="folders">
-				<a style="visibility: hidden;" id="{{ index }}_settings" class="settings"><button class="share" onclick="window.location.href='/share?a=create&file_path={{ data_set[index].href }}'"></button><button class="btn btn-primary" style="position: absolute;margin-left: 25px;" id="{{ index|string }}_rename_select" onclick="rename('{{ index|string }}')">rename</button><button class="btn btn-primary save_new_name" style="position: absolute;margin-left: 25px;visibility: hidden;" id="{{ index|string }}_rename_submit" onclick="rename_submit('{{ index|string }}', '{{ data_set[index].href }}', 'vault')" placeholder="enter new folder name" type="button">Save</button><button id="{{ index|string }}_delete" class="btn btn-primary" onclick="window.location.href='/delete?path={{ data_set[index].href }}&type={{ data_set[index].type }}'">delete</button><input id="{{ index|string }}_new_folder_name" style="visibility: hidden;background-color: rgb(30 30 30 / 1);" class="folder_name new_folder_name"></a>
+				<a style="visibility: hidden;" id="{{ index }}_settings" class="settings"><button class="share" onclick="window.location.href='/share?a=create&file_path={{ data_set[index].href }}&file_type=vault'"></button><button class="btn btn-primary" style="position: absolute;margin-left: 25px;" id="{{ index|string }}_rename_select" onclick="rename('{{ index|string }}')">rename</button><button class="btn btn-primary save_new_name" style="position: absolute;margin-left: 25px;visibility: hidden;" id="{{ index|string }}_rename_submit" onclick="rename_submit('{{ index|string }}', '{{ data_set[index].href }}', 'vault')" placeholder="enter new folder name" type="button">Save</button><button id="{{ index|string }}_delete" class="btn btn-primary" onclick="window.location.href='/delete?path={{ data_set[index].href }}&type={{ data_set[index].type }}'">delete</button><input id="{{ index|string }}_new_folder_name" style="visibility: hidden;background-color: rgb(30 30 30 / 1);" class="folder_name new_folder_name"></a>
 				<a  href="/open?path={{ data_set[index].path }}&name={{ data_set[index].enc_name }}&type=vault" id="{{ index }}_info" title="{{ data_set[index].href }}" class="folders"><span class="icon folder vault vault_item"></span><span class="name">{{ data_set[index].name }}</span> <span class="details">Account Vault</span></a>
 				<a class="delete_href" onclick="settings_show('{{ index|string }}')"></a>
 			</li>
 			{% else %}
 			<li class="files">
-				<a style="visibility: hidden;" id="{{ index }}_settings" class="settings"><button onclick="window.location.href='/download?file={{ data_set[index].href }}'" class="fa fa-download download" aria-hidden="true"></button><button class="share" onclick="window.location.href='/share?a=create&file_path={{ data_set[index].href }}'"></button><button class="btn btn-primary" style="position: absolute;margin-left: 25px;" id="{{ index|string }}_rename_select" onclick="rename('{{ index|string }}')">rename</button><button class="btn btn-primary save_new_name" style="position: absolute;margin-left: 25px;visibility: hidden;" id="{{ index|string }}_rename_submit" onclick="rename_submit('{{ index|string }}', '{{ data_set[index].href }}', 'file')" placeholder="enter new folder name" type="button">Save</button><button id="{{ index|string }}_delete" class="btn btn-primary" onclick="window.location.href='/delete?path={{ data_set[index].href }}&type={{ data_set[index].type }}'">delete</button><input id="{{ index|string }}_new_folder_name" style="visibility: hidden;background-color: rgb(30 30 30 / 1);" class="folder_name new_folder_name"></a>
+				<a style="visibility: hidden;" id="{{ index }}_settings" class="settings"><button onclick="window.location.href='/download?file={{ data_set[index].href }}'" class="fa fa-download download" aria-hidden="true"></button><button class="share" onclick="window.location.href='/share?a=create&file_path={{ data_set[index].href }}&file_type=file'"></button><button class="btn btn-primary" style="position: absolute;margin-left: 25px;" id="{{ index|string }}_rename_select" onclick="rename('{{ index|string }}')">rename</button><button class="btn btn-primary save_new_name" style="position: absolute;margin-left: 25px;visibility: hidden;" id="{{ index|string }}_rename_submit" onclick="rename_submit('{{ index|string }}', '{{ data_set[index].href }}', 'file')" placeholder="enter new folder name" type="button">Save</button><button id="{{ index|string }}_delete" class="btn btn-primary" onclick="window.location.href='/delete?path={{ data_set[index].href }}&type={{ data_set[index].type }}'">delete</button><input id="{{ index|string }}_new_folder_name" style="visibility: hidden;background-color: rgb(30 30 30 / 1);" class="folder_name new_folder_name"></a>
 				<a href="/open?path={{ data_set[index].path }}&name={{ data_set[index].enc_name }}&type={{ data_set[index].type }}" id="{{ index }}_info" title="{{ data_set[index].href }}" class="files"><span class="icon file f-{{ data_set[index].type }}">.{{ data_set[index].type }}</span><span class="name">{{ data_set[index].name }}</span> <span class="details">{{ ((data_set[index].data|length/1000000)|string)[:5] }} Megabytes</span></a>
 				<a class="delete_href" onclick="settings_show('{{ index|string }}')"></a>
 			</li>
@@ -82,7 +82,8 @@
 		{% with message = get_flashed_messages() %}
 		{% if message %}
 		<div class="alert success-alert">
-			<a type="button" id="message">{{ ((message|string).replace("['", "").replace("']", "")) }}</a>
+			<button data-clipboard-text="{{ ((message|string).replace("['", "").replace("']", "")) }}" id="click_share_url" class="click_share_url" style="visibility: hidden;position: absolute;left: -999999999999999999%;"></button>
+			<a id="message">{{ ((message|string).replace("['", "").replace("']", "")) }}</a>
 			<a class="close">&times;</a>
 		  </div>
 		{% endif %}
@@ -99,5 +100,6 @@
 	<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
 	<script src="https://kit.fontawesome.com/98889b1ced.js" crossorigin="anonymous"></script>
 	<script src='https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js'></script>
+	<script src="/static/js/clipboard.min.js"></script>
 </body>
 </html>

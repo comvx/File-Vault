@@ -225,3 +225,38 @@ a {
   transition: transform .3s;
   width: 14px;
 }
+/*-------------------------
+	Search box
+-------------------------*/
+.alert{
+  width: 40%;
+  height: auto;
+  opacity: 0.75;
+  margin: 20px auto;
+  padding: 30px;
+  position: relative;
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 700;
+  border-radius: 25px;
+  margin-top: 5%;
+  word-break: break-all;
+}
+.close{
+  position:absolute;
+  width:30px;
+  height:30px;
+  opacity:0.5;
+  right:15px;
+  top:25px;
+  text-align:center;
+  font-size:1.6em;
+  cursor:pointer;
+}
+.success-alert{
+    background-color:#131516;
+}
+.close{
+	border-color:#ffffff;
+	color:#ffffff;
+  }
