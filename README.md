@@ -18,7 +18,7 @@
 <br />
 <p align="center">
   <a href="https://github.com/othneildrew/Best-README-Template">
-    <img src="images/logo.png" alt="Logo" width="80" height="80">
+    <img src="/File%20Vault/images/logo.png" alt="Logo" width="80" height="80">
   </a>
 
   <h3 align="center">Vault - Manager</h3>
@@ -41,7 +41,6 @@
 * [Getting Started](#getting-started)
   * [Prerequisites](#prerequisites)
   * [Installation](#installation)
-* [Usage](#usage)
 * [License](#license)
 
 
@@ -94,14 +93,6 @@ pip install -r requirements.txt
 python __main__.py
 ```
 
-
-
-<!-- USAGE EXAMPLES -->
-## Usage
-
-Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
-
-_For more examples, please refer to the [Documentation](https://example.com)_
 
 <!-- LICENSE -->
 ## License
