@@ -131,4 +131,4 @@ Project Link: [https://github.com/comvx/File-Vault)
 [issues-url]: https://github.com/othneildrew/Best-README-Template/issues
 [license-shield]: https://img.shields.io/github/license/othneildrew/Best-README-Template.svg?style=flat-square
 [license-url]: https://github.com/othneildrew/Best-README-Template/blob/master/LICENSE.txt
-[product-screenshot]: File-Vault/images/screenshot.png
+[product-screenshot]: /File%20Vault/images/screenshot.png
