@@ -24,7 +24,7 @@
   <h3 align="center">Vault - Manager</h3>
 
   <p align="center">
-    An open source looking vault manager made with Python! [![Open Source Love svg1](https://badges.frapsoft.com/os/v1/open-source.svg?v=103)](https://github.com/ellerbrock/open-source-badges/)
+    An open source looking vault manager made with Python!
     <br />
     <br />
     <a href="https://www.vault-manager.de/">View Demo</a>
