@@ -18,7 +18,7 @@
 <br />
 <p align="center">
   <a href="https://github.com/othneildrew/Best-README-Template">
-    <img src="/File%20Vault/images/logo-transparent.png" alt="Logo" width="300" height="120">
+    <img src="/File%20Vault/images/GIT.png" alt="Logo" width="300" height="120">
   </a>
 
   <h3 align="center">Vault - Manager</h3>
@@ -122,4 +122,4 @@ Project Link: [https://github.com/comvx/File-Vault)
 [issues-url]: https://github.com/othneildrew/Best-README-Template/issues
 [license-shield]: https://img.shields.io/github/license/othneildrew/Best-README-Template.svg?style=flat-square
 [license-url]: https://github.com/othneildrew/Best-README-Template/blob/master/LICENSE.txt
-[product-screenshot]: /File%20Vault/images/GIT.png
+[product-screenshot]: /File%20Vault/images/screenshot.png
