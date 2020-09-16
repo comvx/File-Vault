@@ -18,7 +18,7 @@
 <br />
 <p align="center">
   <a href="https://github.com/othneildrew/Best-README-Template">
-    <img src="/File%20Vault/images/GIT.png" alt="Logo" width="300" height="120">
+    <img src="/File%20Vault/images/GIT.png" alt="Logo" width="350" height="120">
   </a>
 
   <h3 align="center">Vault - Manager</h3>
@@ -48,7 +48,7 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-[![Product Name Screen Shot][product-screenshot]]
+[Product Name Screen Shot][product-screenshot]
 
 The Vault-Manager is a highly secure file and password manager. It uses AES-256, SHA512, Flask-Login, SQLAlchemy. Additionally, it is easy to use and flexible!
 
@@ -75,8 +75,7 @@ This section should list any major frameworks that you built your project using.
 <!-- GETTING STARTED -->
 ## Getting Started
 
-This is an example of how you may give instructions on setting up your project locally.
-To get a local copy up and running follow these simple example steps.
+In order to run the manager follow the [installation](#installation) guide
 
 ### Installation
 
