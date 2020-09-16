@@ -48,7 +48,7 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-[Product Name Screen Shot][product-screenshot]
+[![Product Name Screen Shot][product-screenshot]
 
 The Vault-Manager is a highly secure file and password manager. It uses AES-256, SHA512, Flask-Login, SQLAlchemy. Additionally, it is easy to use and flexible!
 
