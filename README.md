@@ -18,7 +18,7 @@
 <br />
 <p align="center">
   <a href="https://github.com/othneildrew/Best-README-Template">
-    <img src="/File%20Vault/images/logo-transparent.png" alt="Logo" width="120" height="120">
+    <img src="/File%20Vault/images/logo-transparent.png" alt="Logo" width="300" height="120">
   </a>
 
   <h3 align="center">Vault - Manager</h3>
