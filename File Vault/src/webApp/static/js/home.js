@@ -44,10 +44,6 @@ document.addEventListener("DOMContentLoaded", function(event) {
      catch (e) {
      }
      var clipboard = new ClipboardJS('.click_share_url');
-    if ((document.getElementById("message").text).indexOf("uuid") != -1){
-        document.getElementById("click_share_url").click();
-        document.getElementById("message").text = "Share url copied to clipboard!"
-    }
 });
 function settings_show(index){
     var panel_settings = document.getElementById(index+"_settings");
@@ -79,9 +75,15 @@ function rename_submit(index, href, type){
 
     window.location.href='/rename?path='+href+'&new_name='+input_new_folder_name.value+'&type='+type;    
 }
+function copied(){
+    document.getElementById("share_button").innerHTML = "Url copied to clipboard!";
+}
 
 $(".close").click(function() {
     $(this)
       .parent(".alert")
       .fadeOut();
+  });
+  $( document ).on( "vclick", function() {
+      $("#share_button").innerHTML = "Url copied to clipboard!";
   });

@@ -8,4 +8,4 @@ import shutil, os
 if __name__ == '__main__':
     shutil.rmtree(str(os.getcwd()).replace('\\', "/") + "/webApp/utils/authentication/database/session_data/server-sided/")
     os.mkdir(str(os.getcwd()).replace('\\', "/") + "/webApp/utils/authentication/database/session_data/server-sided/")
-    app.run(debug=True)
+    app.run(debug=True, host="192.168.178.88")
