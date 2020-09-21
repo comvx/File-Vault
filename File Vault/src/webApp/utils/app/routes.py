@@ -412,7 +412,7 @@ def share():
                         file = get_file_from_dir(dest_dir, share_item[0].href.split("/")[-1])
                         db.session.delete(share_item[0])
                         db.session.commit()
-                        return share_open(file, uuid_client, "files")
+                        return share_open(file, uuid_client, "file")
     elif action == "create":
         if current_user.is_authenticated:
             focused_file_path = request.args.get('file_path')
@@ -442,7 +442,7 @@ def share():
                             new_share = Share(uuid=str(created_uuid), href=focused_file_path_dir+"/"+share_vault_name, user=current_user)
                             db.session.add(new_share)
                             db.session.commit()
-                            flash("172.105.247.216/share?a=use&uuid="+str(created_uuid)+"&type=vault")
+                            flash("https://vault-manager.de/share?a=use&uuid="+str(created_uuid)+"&type=vault")
                             return index_path(dest_dir.dir_path)
                     elif focused_file_type == "file":
                         focused_file = get_file_from_dir(dest_dir, focused_file_path.split("/")[-1])
@@ -465,7 +465,7 @@ def share():
                             new_share = Share(uuid=str(created_uuid), href=focused_file_path_dir+"/"+share_file_name, user=current_user)
                             db.session.add(new_share)
                             db.session.commit()
-                            flash("172.105.247.216/share?a=use&uuid="+str(created_uuid)+"&type=file")
+                            flash("https://vault-manager.de/share?a=use&uuid="+str(created_uuid)+"&type=file")
                             return index_path(dest_dir.dir_path)
     return redirect(url_for("index"))
 
