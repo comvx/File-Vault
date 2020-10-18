@@ -27,7 +27,7 @@
     An open source looking vault manager made with Python!
     <br />
     <br />
-    <a href="https://www.vault-manager.de/">View Demo</a>
+    <a>View Demo</a>
   </p>
 </p>
 
