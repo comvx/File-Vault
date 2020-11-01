@@ -143,6 +143,23 @@ form{
 	box-shadow: none!important;
 	outline:none!important;
 }
+.share_button{
+	-webkit-appearance: none!important;
+	background-color: transparent;
+    border: none;
+    outline: none;
+	padding-right: 22px;
+	color: #ffffff;
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 20px;
+}
+.share_button:focus{
+	border-color: transparent!important;
+	border: none!important;
+	box-shadow: none!important;
+	outline:none!important;
+}
 .download:focus{
 	outline:none!important;
 	border: none!important;

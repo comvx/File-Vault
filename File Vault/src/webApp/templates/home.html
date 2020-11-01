@@ -8,7 +8,6 @@
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css">
 	<!-- Include our stylesheet -->
 	<link href="/static/css/home.css" rel="stylesheet"/>
-	<link href="/static/css/context-menu.css" rel="stylesheet"/>
 	<link rel="icon" type="image/png" href="/static/images/shield_logo.png">
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
@@ -82,8 +81,7 @@
 		{% with message = get_flashed_messages() %}
 		{% if message %}
 		<div class="alert success-alert">
-			<button data-clipboard-text="{{ ((message|string).replace("['", "").replace("']", "")) }}" id="click_share_url" class="click_share_url" style="visibility: hidden;position: absolute;left: -999999999999999999%;"></button>
-			<a id="message">{{ ((message|string).replace("['", "").replace("']", "")) }}</a>
+			<button onclick="copied()" id="share_button" class="click_share_url share_button" data-clipboard-text="{{ ((message|string).replace("['", "").replace("']", "")) }}" id="message">Click to copy the share url!</button>
 			<a class="close">&times;</a>
 		  </div>
 		{% endif %}
