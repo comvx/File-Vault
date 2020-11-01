@@ -432,7 +432,7 @@ def share():
 
                             original_vault_name = decrypt(focused_vault.vault_name.encode(), session[session_name+"key"], session[session_name+"iv"]).decode()
                             original_vault_username = decrypt(focused_vault.vault_username.encode(), session[session_name+"key"], session[session_name+"iv"]).decode()
-                            original_vault_password = decrypt(focused_vault.vault_username.encode(), session[session_name+"key"], session[session_name+"iv"]).decode()
+                            original_vault_password = decrypt(focused_vault.vault_password.encode(), session[session_name+"key"], session[session_name+"iv"]).decode()
 
                             share_vault_name = encrypt(original_vault_name.encode(), str(created_uuid), iv).decode()
 
