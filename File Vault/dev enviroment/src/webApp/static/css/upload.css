@@ -1,0 +1,60 @@
+html,
+body,
+.container {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    min-width: 320px;
+}
+.be {
+    background: rgb(34,34,34)!important;
+    color: #e0e0e0!important;
+}
+.bcu-footer {
+    background-color: rgb(24 24 24 / 1)!important;
+    border-top: rgb(24 24 24 / 1)!important;
+}
+.be-input-link {
+    color: #3684e2!important;
+}
+.btn{
+    border-radius: 50px!important;
+    background: transparent!important;
+    padding: 10px 50px!important;
+    border: 2px solid #e4d8db!important;
+    color: #e4d8db!important;
+    text-transform: uppercase!important;
+    font-size: 11px!important;
+    margin-top: 10px!important;
+}
+.progress {
+    background: rgba(255,255,255,0.1);
+    justify-content: flex-start;
+    border-radius: 100px;
+    align-items: center;
+    padding: 0 5px;
+    display: flex;
+    height: 16px;
+    width: 500px;
+    position: absolute;
+    bottom: 100px;
+    opacity: 0;
+  }
+  
+  .progress-value {
+    box-shadow: 0 10px 40px -10px #fff;
+    border-radius: 100px;
+    background: #fff;
+    height: 10px;
+    width: 0%;
+  }
+  
+  @keyframes effect {
+    0% { width: 0; }
+    100% { width: 100%; }
+  }
+  @keyframes load {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+  }

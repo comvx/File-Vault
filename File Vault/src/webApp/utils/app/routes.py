@@ -19,7 +19,7 @@ from webApp.utils.authentication.generator import gen_user_id, gen_Pass
 from webApp.utils.data import *
 from webApp import *
 
-style_bg_status_blue = 'background: rgb(72,146,227);background: radial-gradient(circle, rgba(72,146,227,0.5) 11%, rgba(72,146,227,0.6) 34%, rgba(60,60,60,1) 81%); '
+style_bg_status_blue = 'background: linear-gradient(135deg, #080808 0%, #20272f 100%); '
 style_bg_status_red = 'background: rgb(227, 72, 72);background: radial-gradient(circle, rgba(227, 72, 72,0.5) 11%, rgba(227, 72, 72,0.6) 34%, rgba(60,60,60,1) 81%);'
 
 
@@ -104,14 +104,11 @@ def login():
                 del hashed_master_password
                 del user
 
-                time.sleep(1.7)
                 return redirect("/home?path=")
             else:
-                time.sleep(1.7)
                 flash("Wrong username and/or password")
                 return render_template('login.html', form=form, style_bg_status=style_bg_status_red)
         except Exception as identifier:
-            time.sleep(1.7)
             flash("Wrong username and/or password")
             return render_template('login.html', form=form, style_bg_status=style_bg_status_red)
     return render_template('login.html', form=form, style_bg_status=style_bg_status_blue)
@@ -206,6 +203,7 @@ def home():
 
         vault_add = home.vault_add()
         home_add = home.add()
+        controller_form = home.controller()
 
         current_folder_path = ""
 
@@ -216,9 +214,9 @@ def home():
                         new_dir = Directory(dir_name=home_add.folder_name_input.data, dir_path=calling_path+"/"+home_add.folder_name_input.data, user=current_user)
                         db.session.add(new_dir)
                         db.session.commit()
-                        flash(f'Folder {home_add.folder_name_input.data} was added!')
+                        flash("Folder " + home_add.folder_name_input.data + " was added!")
                     else:
-                        flash(f'Folder does already exists!')
+                        flash("Folder does already exists!")
         if vault_add.validate_on_submit():
             if vault_add.submit:
                 if check_validator({vault_add.vault_name.data, vault_add.vault_username.data}):
@@ -235,14 +233,14 @@ def home():
                                 vault_add.vault_name.data = ""
                                 vault_add.vault_username.data = ""
                                 vault_add.vault_password.data = ""
-                                flash(f'Vault {vault_add.vault_name.data} was added!')
+                                flash("Vault " + vault_add.vault_name.data + " was added!")
                             else:
                                 vault_add.vault_name.data = ""
                                 vault_add.vault_username.data = ""
                                 vault_add.vault_password.data = ""
-                                flash(f'Vault does already exists!')
+                                flash("Vault does already exists!")
                         else:
-                            flash(f'First, create a folder!')
+                            flash("First, create a folder!")
                     except KeyError as e:
                         flash("Logout timer expired")
                         return redirect(url_for('logout'))
@@ -252,13 +250,14 @@ def home():
         calling_path_splitter = list()
         calling_path_splitter = calling_path.split("/")
         calling_path_splitter[0] = "/"
+
         if type(dataset) == Response:
             return dataset
         try:
             if len(dataset) < 1:
-                return render_template('home.html', data_set=dataset, home_add=home_add, current_folder_path=absolute_path, current_folders=calling_path_splitter, current_folder_href=calling_path, vault_add=vault_add, nothingfound="block")
+                return render_template('home.html', data_set=dataset, controller=controller_form ,home_add=home_add, current_folder_path=absolute_path, current_folders=calling_path_splitter, current_folder_href=calling_path, vault_add=vault_add, nothingfound="block")
             else:
-                return render_template('home.html', data_set=dataset, home_add=home_add, current_folder_path=absolute_path, current_folders=calling_path_splitter, current_folder_href=calling_path, vault_add=vault_add, nothingfound="none")
+                return render_template('home.html', data_set=dataset, controller=controller_form , home_add=home_add, current_folder_path=absolute_path, current_folders=calling_path_splitter, current_folder_href=calling_path, vault_add=vault_add, nothingfound="none")
         except Exception as e:
             return dataset
     else:
@@ -294,13 +293,13 @@ def upload():
                             directory.file_count += 1
                             db.session.commit()
                         time.sleep(5)
-                        #flash(f'File {file_name} was uploaded!')
+                        flash("File " + file_name + " was uploaded!")
                         return index_path(calling_path)
                     except KeyError as e:
                         flash("Logout timer expired")
                         return redirect(url_for('logout'))
             else:
-                flash(f'First, create a folder!')
+                flash("First, create a folder!")
         return render_template("upload.html", form=form)
     else:
         flash("Logout timer expired")
@@ -527,7 +526,7 @@ def delete():
                     db.session.delete(vault)
                     directory.file_count -= 1
                     db.session.commit()
-                    flash(f'Vault was deleted!')
+                    flash("Vault was deleted!")
         elif data_type != "folder" and data_type != "vault":#file
             splitter_index_dir_path = data_path.rindex("/")
             directory = get_dir_by_path(data_path[:splitter_index_dir_path])
@@ -536,7 +535,7 @@ def delete():
                     db.session.delete(file)
                     directory.file_count -= 1
                     db.session.commit()
-                    flash(f'File was deleted!')
+                    flash("File was deleted!")
         else:#folder
             for directory in dirs:
                 if str(data_path) == str(directory.dir_path):
@@ -546,7 +545,7 @@ def delete():
                         db.session.delete(vault)
                     db.session.delete(directory)
                     db.session.commit()
-                    flash(f'Folder {directory.dir_name[:19]} was deleted!')
+                    flash("Folder" + directory.dir_name[:19] + "was deleted!")
         return index_path(data_path[:data_path.rindex("/")])
     else:
         flash("Logout timer expired")
@@ -569,10 +568,10 @@ def rename():
                     new_dir_href = dir.dir_path[:splitter_index_dir_path] + "/" + new_field_name
                     dir.dir_path = new_dir_href
                     db.session.commit()
-                    flash(f'Folder renamed to {new_field_name[:19]}.. !')
+                    flash("Folder renamed to" + new_field_name[:19] + ".. !")
 
                 else:
-                    flash(f'Folder does already exists!')
+                    flash("Folder does already exists!")
         elif data_type == "vault":
             splitter_index_dir_path = dir_focused.rindex("/")
             dir = get_dir_by_path(dir_focused[:splitter_index_dir_path])
@@ -585,9 +584,9 @@ def rename():
                     if duplicates_vault(new_enc_name, dir_focused[:splitter_index_dir_path]):
                         vault.vault_name = new_enc_name
                         db.session.commit()
-                        flash(f'Vault renamed to {new_field_name[:19]}.. !')
+                        flash("Vault renamed to" + ".. !")
                     else:
-                        flash(f'Vault does already exists!')
+                        flash("Vault does already exists!")
         elif data_type == "file":
             splitter_index_dir_path = dir_focused.rindex("/")
             dir = get_dir_by_path(dir_focused[:splitter_index_dir_path])
@@ -600,9 +599,9 @@ def rename():
                     if duplicates_file(new_enc_name, dir_focused[:splitter_index_dir_path]):
                         file.file_name = new_enc_name
                         db.session.commit()
-                        flash(f'File renamed to {new_field_name[:19]}.. !')
+                        flash("File renamed to " + new_field_name[:19] + ".. !")
                     else:
-                        flash(f'File does already exists!')
+                        flash("File does already exists!")
 
 
         index_from_splitter = dir_focused.rindex("/")

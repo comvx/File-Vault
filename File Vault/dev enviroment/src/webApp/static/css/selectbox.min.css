@@ -1,0 +1,101 @@
+.selectbox {
+	box-sizing: border-box;
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 9pt;
+    display: inline-block;
+    background: transparent;
+    width: 50px;
+    position: absolute;
+    right: 52%;
+    top: 4%;
+}
+}
+
+.selectbox-options {
+	position: absolute;
+	width: 100%;
+	overflow: visible;
+	z-index: 1000
+}
+
+.selectbox-options--hidden {
+	display: none
+}
+
+.selectbox__option {
+    padding: 5px 10px;
+    cursor: pointer;
+    color: #ffffff;
+    background: #1d1d1d;
+    display: flex;
+    align-items: center;
+    transition: .1s linear all;
+}
+.selectbox__option:first-child {
+	border-top: 1px solid #1d1d1d;
+	border-top-left-radius: 5px;
+	border-top-right-radius: 5px;
+}
+
+.selectbox__option:last-child {
+	border-bottom: 1px solid #1d1d1d;
+	border-bottom-left-radius: 5px;
+	border-bottom-right-radius: 5px
+}
+
+.selectbox__option:hover {
+    background: #202020;
+    color: #fff;
+}
+
+.selectbox__option--selected {
+	color: #fff;
+	background: #3498db;
+}
+
+.selectbox__label {
+    cursor: pointer;
+    padding: 5px 10px;
+    background: #1d1d1d;
+    color: #ffffff;
+    position: relative;
+    display: flex;
+    align-items: center;
+    border-radius: 5px;
+    transition: 150ms linear all;
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.125);
+}
+
+.selectbox__label:after {
+	content: "";
+	display: inline;
+	border-left: 5px solid transparent;
+	border-right: 5px solid transparent;
+	border-top: 6px solid #202020;
+	position: absolute;
+	right: 8px;
+	top: 50%;
+	transform: translateY(-50%);
+	transition: 150ms linear all
+}
+
+.selectbox__label:hover {
+    border: 1px solid #3498db;
+}
+.selectbox-options{
+    max-height: 93px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+
+.selectbox-options::-webkit-scrollbar {
+    width: 5px;
+  }
+  .selectbox-options::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .selectbox-options::-webkit-scrollbar-thumb {
+    background-color: transparent;
+    border-radius: 20px;
+    border: 3px solid #464646;
+  }
