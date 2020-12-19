@@ -48,7 +48,8 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-[![Product Name Screen Shot][product-screenshot]
+<img src="/File%20Vault/images/screenshot.png">
+<img src="/File%20Vault/images/screenshot-2.png">
 
 The Vault-Manager is a highly secure file and password manager. It uses AES-256, SHA512, Flask-Login, SQLAlchemy. Additionally, it is easy to use and flexible!
 
@@ -121,4 +122,3 @@ Project Link: [https://github.com/comvx/File-Vault)
 [issues-url]: https://github.com/othneildrew/Best-README-Template/issues
 [license-shield]: https://img.shields.io/github/license/othneildrew/Best-README-Template.svg?style=flat-square
 [license-url]: https://github.com/othneildrew/Best-README-Template/blob/master/LICENSE.txt
-[product-screenshot]: /File%20Vault/images/screenshot.png
