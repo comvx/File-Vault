@@ -3,6 +3,8 @@ from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes
 import base64
 
+from .processing import decomp, comp
+
 def pad(s):
     padding = algorithms.AES.block_size - len(s) % algorithms.AES.block_size 
     return s + bytes([padding]) * padding
@@ -20,11 +22,11 @@ def encrypt(data, key, IV):
     data = pad(data)
 
     output = encryptor.update(data) + encryptor.finalize()
-    return base64.b16encode(output)
+    return comp(output)
 
 def decrypt(data, key, IV):
     backend = default_backend()
-    data = base64.b16decode(data)
+    data = decomp(data)
     digest = hashes.Hash(hashes.SHA256(), backend=backend)
     digest.update(key.encode())
     key = digest.finalize()

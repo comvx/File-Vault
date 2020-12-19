@@ -17,3 +17,11 @@ class vaultset():
         "password" : ppassword,
         "id" : pid
         }
+class fileset():
+    def __init__(self, pname, ptype, pdata, pseek):
+        self.data_set = {
+            "name" : pname,
+            "type" : ptype,
+            "data" : pdata,
+            "seek" : pseek
+        }

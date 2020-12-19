@@ -29,6 +29,9 @@ function is_touch_device1() {
     document.execCommand('copy');
     window.getSelection().removeAllRanges();
   }
+  function copied(){
+    document.getElementById("share_button").innerHTML = "Url copied to clipboard!";
+}
 function settings_show(index){
     var panel_settings = document.getElementById(index+"_settings");
     var panel_info = document.getElementById(index+"_info");
@@ -96,9 +99,6 @@ function getIndex(color){
         }
     }
 }
-function copied(){
-    document.getElementById("share_button").innerHTML = "Url copied to clipboard!";
-}
 function show_add_format(){
     var add_form = document.getElementById("add-format");
     if(add_form.style.display == "none"){
@@ -119,8 +119,10 @@ window.addEventListener('click', function (e){
       }
     }
   });
-
-
+  
   document.addEventListener("DOMContentLoaded", function(event) { 
     var clipboard = new ClipboardJS('#share_button');
 });
+function gen_password(){
+    document.getElementById("vault_password").value = Math.random().toString(36).slice(Math.random() * (-5 - -11) + -11);
+}

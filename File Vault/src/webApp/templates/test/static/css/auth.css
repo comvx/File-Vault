@@ -1,0 +1,224 @@
+@import url(https://fonts.googleapis.com/css?family=Gudea:400,700);
+body {
+  width: auto;
+  height: auto;
+  margin: 0;
+  padding: 0;
+  font-family: 'Gudea', sans-serif;
+  resize: none!important;
+  overflow: hidden;
+  background: cover;
+  background-color: #3c3c3c;
+  animation: 1s ease-out 0s 1 onloadEffect_bg;
+}
+body ::-webkit-input-placeholder {
+  color: #585858;
+}
+*{
+  -webkit-appearance: none;
+}
+body .authent {
+  display: none;
+  background: transparent!important;
+  background: linear-gradient(45deg, #3c3c3c 0%, #3c3c3c 100%);
+  position: absolute;
+  left: 0;
+  right: 0;
+  margin: auto;
+  width: 100px;
+  color: white;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-align: center;
+  padding: 20px 70px;
+  top: 0;
+  bottom: 0;
+  height: 70px;
+  opacity: 0;
+}
+body .authent p {
+  text-align: center;
+  color: white;
+}
+body p {
+  color: #c9c9c9;
+  font-size: 10px;
+  text-align: left;
+}
+body .login {
+    resize: none!important;
+    opacity: 1;
+    top: 20px;
+    border-radius: 3px;
+    position: relative;
+    width: 240px;
+    min-width: 240px;
+    height: 275px;
+    min-height: 275px;
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin: auto;
+    top: 0;
+    bottom: 0;
+    padding: 100px 40px 40px 40px;
+    box-shadow: 0px 0px 30px 5px rgba(0, 0, 0, 0.3);
+    background: rgb(34,34,34);
+    background: linear-gradient(45deg, #16171b 0%, #1f222e 100%);
+    animation: 1s ease-out 0s 1 onloadEffect_login;
+}
+
+body .login .validation {
+  position: absolute;
+  z-index: 1;
+  right: 10px;
+  top: 6px;
+  opacity: 0;
+}
+body .login_title {
+  color: #d3d4de;
+  height: 60px;
+  text-align: left;
+  font-size: 20px;
+}
+body .login_fields {
+  height: 208px;
+  position: absolute;
+  left: 0;
+}
+body .login_fields .icon {
+  position: absolute;
+  z-index: 1;
+  left: 36px;
+  top: 8px;
+  opacity: .5;
+}
+body .login_fields input{
+  font-size: 15px;
+  background-color: transparent!important;
+}
+body .login_fields input[type='password'] {
+  color: #e4d8db !important;
+}
+body .login_fields input[type='text'], body .login_fields input[type='password'] {
+  color: #afb1be;
+  width: 190px;
+  margin-top: -2px;
+  left: 0;
+  padding: 10px 65px;
+  border-top: none;
+  border-bottom: none;
+  border-right: none;
+  border-left: none;
+  outline: none;
+  font-family: 'Gudea', sans-serif;
+  box-shadow: none;
+}
+body .login_fields__user, body .login_fields__password {
+  position: relative;
+}
+body .login_fields__submit {
+  position: relative;
+  top: 35px;
+  left: 0;
+  width: 80%;
+  right: 0;
+  margin: auto;
+}
+body .login_fields__submit .forgot {
+  float: right;
+  font-size: 10px;
+  margin-top: 11px;
+}
+body .login_fields__submit .forgot a {
+  color: #606479;
+  text-decoration: none;
+}
+body .login_fields__submit input {
+  border-radius: 50px;
+  background: transparent;
+  padding: 10px 50px;
+  border: 2px solid #e4d8db;
+  color: #e4d8db;
+  text-transform: uppercase;
+  font-size: 11px;
+}
+body .login_fields__submit input:focus {
+  box-shadow: none;
+  outline: none;
+}
+body .login_fields__submit input:hover {
+  color: rgb(34, 34, 34);
+  background: #e4d8db;
+  cursor: pointer;
+}
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus,
+select:-webkit-autofill,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:focus {
+  border: none;
+  background-color: transparent!important;
+}
+/* Smartphone Hochformat (Portrait) */
+@media only screen
+  and (min-width: 320px)
+  and (max-width: 479px) {
+
+}
+
+/* Tablet Hochformat (Portrait) */
+@media only screen
+  and (min-width: 768px)
+  and (max-width: 991px) {
+
+}
+.alert {
+  font-size: 14px;
+  position: relative;
+  padding: .75rem 1.25rem;
+  margin-top: 4rem;
+  border: 1px solid transparent;
+  border-radius: .25rem;
+  width: 75%;
+  margin-left: 5.5%;
+  text-align: left;
+  font-family: 'Open Sans', sans-serif;
+}
+.alert-dark {
+  color: #ce5757;
+}
+/* Tablet Querformat (Landscape) - PC mit geringer Auflösung */
+@media only screen
+  and (min-width: 992px)
+  and (max-width: 1199px) {
+
+}
+
+/* PC mit hoher Auflösung */
+@media only screen
+  and (min-width: 1200px) {
+
+}
+@keyframes onloadEffect_login {
+  0% {
+    /*transform: translateY(-100%);*/
+    opacity: 0.25;
+  }
+  100% {
+    /*transform: translateY(0);*/
+    opacity: 1;
+  }
+}
+@keyframes onloadEffect_bg {
+  0% {
+    transform: scale(1.15);
+  }
+  100% {
+    transform: scale(1);
+  }
+}

@@ -260,3 +260,8 @@ a {
 	border-color:#ffffff;
 	color:#ffffff;
   }
+  @media only screen and (hover: none) and (pointer: coarse){
+    .value-container {
+      visibility: visible;
+    }
+  }

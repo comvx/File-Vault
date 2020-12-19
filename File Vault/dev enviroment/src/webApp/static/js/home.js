@@ -123,3 +123,6 @@ window.addEventListener('click', function (e){
   document.addEventListener("DOMContentLoaded", function(event) { 
     var clipboard = new ClipboardJS('#share_button');
 });
+function gen_password(){
+    document.getElementById("vault_password").value = Math.random().toString(36).slice(Math.random() * (-5 - -11) + -11);
+}

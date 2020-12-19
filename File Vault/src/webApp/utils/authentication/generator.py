@@ -15,8 +15,8 @@ from webApp.utils.data import pad
 
 gen = secrets.SystemRandom()
 
-def gen_String():
-    return hexlify(os.urandom(gen.randint(99, 200)))
+def gen_String(s, e):
+    return hexlify(os.urandom(gen.randint(s, e))).decode()
 
 def gen_Pass():
     chars = string.ascii_letters + string.digits + "!?()_"
@@ -26,7 +26,6 @@ def gen_Number():
     return gen.randint(20, 35)
 
 def gen_user_id(username):
-    print(len(pad(username, 64)))
     return "u-" + hash(username, (len(username)*len(username))*round((len(username)/2)), pad(username, 64).encode())
 
 def gen_vault_key(iv, iter, username):
