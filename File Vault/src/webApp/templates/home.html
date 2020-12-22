@@ -10,15 +10,18 @@
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css">
 	<!-- Include our stylesheet -->
 	<link href="/static/css/home.css" rel="stylesheet"/>
+	<link href="/static/css/pwdgen.css" rel="stylesheet"/>
 	<link href="/static/css/selectbox.min.css" rel="stylesheet"/>
 	<link rel="icon" type="image/png" href="/static/images/shield_logo.png">
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 	<link rel="preconnect" href="https://fonts.gstatic.com">
 	<link href="https://fonts.googleapis.com/css2?family=Quicksand&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed&display=swap" rel="stylesheet">
+<link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Montserrat&amp;display=swap'>
 
 </head>
 <body>
+	<div style="visibility: hidden;display:none;" class="blur" id="blur"></div>
 	<div class="filemanager">
 		<div class="controller">
 			<form class="search-form">
@@ -68,6 +71,44 @@
 			</div>
 			<div id="add-icon" class="add-icon" type="button" onclick="show_add_format();">
 				<svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="35" height="35" viewBox="0 0 172 172" style=" fill:#000000;"><g fill="none" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><path d="M0,172v-172h172v172z" fill="none"></path><g id="original-icon" fill="#2ecc71"><path d="M86,6.88c-43.62952,0 -79.12,35.49048 -79.12,79.12c0,43.62952 35.49048,79.12 79.12,79.12c43.62952,0 79.12,-35.49048 79.12,-79.12c0,-43.62952 -35.49048,-79.12 -79.12,-79.12zM127.28,89.44h-37.84v37.84h-6.88v-37.84h-37.84v-6.88h37.84v-37.84h6.88v37.84h37.84z"></path></g></g></svg>
+			</div>
+			<div style="visibility: hidden;display:none;" class="container" id="container">
+				<div class="close_pwdgen" id="close_pwdgen" onclick="close_gen('vault_password');">
+					<svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="35" height="35" viewBox="0 0 172 172" style="transform: rotate(45deg); fill:#000000;"><g fill="none" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><path d="M0,172v-172h172v172z" fill="none"></path><g id="original-icon" fill="#cc2e2e"><path d="M86,6.88c-43.62952,0 -79.12,35.49048 -79.12,79.12c0,43.62952 35.49048,79.12 79.12,79.12c43.62952,0 79.12,-35.49048 79.12,-79.12c0,-43.62952 -35.49048,-79.12 -79.12,-79.12zM127.28,89.44h-37.84v37.84h-6.88v-37.84h-37.84v-6.88h37.84v-37.84h6.88v37.84h37.84z"></path></g></g></svg>
+				</div>
+				<div class="result">
+					<div class="result__title field-title">Generated Password</div>
+					<div class="result__info right">click to copy</div>
+					<div class="result__info left">copied</div>
+					<div class="result__viewbox" id="result">CLICK GENERATE</div>
+					<button id="copy-btn" style="--x: 0; --y: 0"><i class="far fa-copy"></i></button>
+				</div>
+				<div class="length range__slider" data-min="4" data-max="32">
+					<div class="length__title field-title" data-length='0'>length:</div>
+					<input id="slider" type="range" min="4" max="32" value="16" />
+				</div>
+			
+				<div class="settings_pane">
+					<span class="settings__title field-title">settings</span>
+					<div class="setting">
+						<input type="checkbox" id="uppercase" checked />
+						<label for="uppercase">ABZ</label>
+					</div>
+					<div class="setting">
+						<input type="checkbox" id="lowercase" checked />
+						<label for="lowercase">abz</label>
+					</div>
+					<div class="setting">
+						<input type="checkbox" id="number" checked />
+						<label for="number">123</label>
+					</div>
+					<div class="setting">
+						<input type="checkbox" id="symbol" />
+						<label for="symbol">?&()!</label>
+					</div>
+				</div>
+			
+				<button class="btn generate" id="generate">Generate</button>
 			</div>
 			<div id="add-format" class="add-format" style="display: none">
 				<div class="add-folder">
@@ -189,6 +230,7 @@
 
 	<!-- Include our script files -->
 	<script src="/static/js/home.js"></script>
+	<script src="/static/js/pwdgen.js"></script>
 	<script src="/static/js/selectbox.min.js"></script>
 	<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
 	<script src="https://kit.fontawesome.com/98889b1ced.js" crossorigin="anonymous"></script>

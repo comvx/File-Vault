@@ -33,5 +33,4 @@ class home_form():
         submit = SubmitField('Create')
 class credit_card(FlaskForm):
     password = StringField("Vault password")
-    generate = SubmitField('Yes')
-    submit = SubmitField('Create')
+    submit = SubmitField('Save')

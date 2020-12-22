@@ -16,16 +16,6 @@ function set_to_edit(id){
 document.getElementById("close_pop").addEventListener("click", function() {
     close_popup();
 });
-function close_popup(){
-    var popup = document.getElementById("cd-popup");
-    popup.style.visibility = "hidden";
-    popup.style.opacity = 0;
-}
-function show_popup(){
-    var popup = document.getElementById("cd-popup");
-    popup.style.visibility = "visible";
-    popup.style.opacity = 1;
-}
 function show_alert(){
     var element = document.getElementById("alert");
     element.style.display = "block";
@@ -35,3 +25,12 @@ $(".close").click(function() {
       .parent(".alert")
       .fadeOut();
   });
+
+  function gen_password(){
+    var blur = document.getElementById("blur");
+    var container = document.getElementById("container");
+    blur.style.display = "inline";
+    blur.style.visibility = "visible";
+    container.style.display = "inline";
+    container.style.visibility = "visible";
+}

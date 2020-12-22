@@ -18,6 +18,15 @@ body {
   padding: 5vw 0;
   overflow-x: hidden;
 }
+.close_pwdgen{
+  background-image: url("/static/images/exit.png");
+  background-position: center;
+  background-size: cover;
+  background-size: 35px;
+  width: 35px;
+  height: 35px;
+  color: rgba(255, 255, 255, 0);
+}
 .align {
   align-items: center;
   display: flex;
@@ -50,8 +59,6 @@ body {
   padding-right: 4px;
   padding-bottom: 2px;
   padding-top: 1px;
-  position: absolute;
-  margin-top: 12px;
 }
 .field-button{
   font: revert!important;
@@ -78,15 +85,16 @@ body {
 }
 
 .card {
-  background-color: #171a1c;
   border-radius: 1rem;
   color: #757575;
   padding: 2rem;
   font-family: Abel;
   box-shadow: #171a1c 0px 0px 10px;
+  background-image: linear-gradient(to right, #171a1c, #0c0c0c);
 }
+
 .card__header {
-  margin-bottom: 4rem;
+  margin-bottom: 6rem;
 }
 .card__header:before, .card__header:after {
   content: ' ';
@@ -102,11 +110,12 @@ body {
 }
 .card__logo {
   float: right;
-  background-image: url(/static/images/logo.png);
+  background-image: url(/static/images/logo-transparent.png);
   background-size: 305px;
   background-repeat: no-repeat;
   background-position: 0px;
   background-position-x: -90px;
+  background-color: transparent;
 }
 .card__number__input {
   font-size: 2rem;
@@ -125,6 +134,21 @@ body {
   margin-right: 2rem;
 }
 
+.strip-bottom {
+  width: 200px;
+  transform: skewX(-15deg) translateX(50px);
+}
+.strip-top {
+  width: 180px;
+  transform: skewX(20deg) translateX(50px);
+}
+.strip-bottom, .strip-top {
+  position: absolute;
+  right: 0;
+  height: inherit;
+  background-image: linear-gradient(to bottom, #ff6767, #ff4545);
+  box-shadow: 0 0 10px 0px rgba(0,0,0,0.5);
+}
 input {
   background-color: transparent;
   border: 0;
@@ -148,7 +172,7 @@ label {
   clear: both;
 }
 .form__field {
-  margin-bottom: 1.5rem;
+  margin-bottom: 3.5rem;
 }
 .form input {
   outline: 0;

@@ -136,17 +136,6 @@ def login():
             return render_template('login.html', form=form, style_bg_status=style_bg_status_red)
     return render_template('login.html', form=form, style_bg_status=style_bg_status_blue)
 
-def umlautRem(input):
-    umlautDictionary = {u'Ä': 'Ae',
-                    u'Ö': 'Oe',
-                    u'Ü': 'Ue',
-                    u'ä': 'ae',
-                    u'ö': 'oe',
-                    u'ü': 'ue'
-                    }
-    umap = {ord(key):unicode(val) for key, val in umlautDictionary.items()}
-    return input.translate(umap)
-
 def transform_dataset(absolute_path):
     if current_user.is_authenticated:
         dirs = current_user.directorys
@@ -341,7 +330,7 @@ def upload_chunk():
         if(current_chunk == 0):
             app.permanent_session_lifetime = timedelta(days=31)
             random_name = gen_config_name()
-            new_config = Config(name=random_name, file_name=file_name_enc, path=(str(os.getcwd()).replace('\\', "/") + "/webApp/utils/data/"+str(current_user.id)+"/"+random_name+".json"), user=current_user)
+            new_config = Config(name=random_name, file_name=file_name_enc, path=("/var/www/webApp/webApp/utils/data/"+str(current_user.id)+"/"+random_name+".json"), user=current_user)
             db.session.add(new_config)
             db.session.commit()
 
@@ -410,13 +399,14 @@ def open_content():
             session_name = current_user.user_manager_id + current_user.username + current_user.get_id()
 
             if form.validate_on_submit():
-                if form.generate:
-                    new_pass = gen_Pass()
+                if form.submit:
+                    new_pwd = form.password.data
                     directory = get_dir_by_path(data_path)
                     if directory != None:
                         vault = get_vault_by_name(data_name, directory)
                         if vault != None:
-                            vault.vault_password = encrypt(new_pass.encode(), session[session_name+"key"], session[session_name+"iv"])
+                            print(new_pwd)
+                            vault.vault_password = encrypt(new_pwd.encode(), session[session_name+"key"], session[session_name+"iv"])
                             db.session.commit()
             del form
 
