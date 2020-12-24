@@ -45,18 +45,10 @@ def index():
 
 @app.route("/")
 def index_path(path):
-    user = User.query.filter_by(user_manager_id="u-4d8a69d401fc268d6c167f2fb2c1e07ec7c0b594e9b2931219e2dda68339fe35002bd85ef6cd5c9b518e5b0cf773cc31503965477f575f49623283a06be6fc5e", username="a88f491e1f1fa78deeda28ed62e57e4ec010a20c2e9a19ac3fc26be55e345247618db585560ba6d2969ed38255a1789909bd1aaf39e8f636d18e0d196c970529", master_password="a88f491e1f1fa78deeda28ed62e57e4ec010a20c2e9a19ac3fc26be55e345247618db585560ba6d2969ed38255a1789909bd1aaf39e8f636d18e0d196c970529").first()
-    login_user(user, remember=True)
-    user_manager_id = gen_user_id("test")
-    authentication = Credentials("test", "test", user_manager_id)
-    secret_key = authentication.get_SecretKey()
-    salt = secret_key[0:16]
-    session_name = current_user.user_manager_id + current_user.username + current_user.get_id()
-    session[session_name+"salt"] = secret_key[16:]
-    session[session_name+"iv"] = secret_key[0:16]
-    session[session_name+"key"] = authentication.gen_key(secret_key, session[session_name+"salt"])
-    
-    return redirect("/home?path="+path)
+    if current_user.is_authenticated:
+        return redirect("/home?path="+path)
+    else:
+        return redirect(url_for('login'))
 
 
 @app.route("/register", methods=['GET', 'POST'])
@@ -225,13 +217,96 @@ def check_validator(fields):
             return False
     return True
 
+def search_for_content(dir, name):
+    session_name = current_user.user_manager_id + current_user.username + current_user.get_id()
+    content_name = encrypt(name.encode(), session[session_name+"key"], session[session_name+"iv"])
+
+    files = dir.files
+    vaults = dir.vaults
+    output = list()
+
+    for file in files:
+        if(file.file_name == content_name and file.file_share == False):
+            output.append(file)
+    for vault in vaults:
+        if(vault.vault_name == content_name and vault.vault_share == False):
+            output.append(vault)
+    for directory in current_user.directorys:
+        dir_path = decrypt(dir.dir_path, session[session_name+"key"], session[session_name+"iv"]).decode()
+        directory_path = decrypt(directory.dir_path, session[session_name+"key"], session[session_name+"iv"]).decode()
+        index = directory_path.rindex("/")
+        if(directory_path[0:index] == dir_path and directory.dir_name == content_name):
+            output.append(directory)
+    return output
+
+def transform_content_to_set(contents, dir):
+    output = list()
+    session_name = current_user.user_manager_id + current_user.username + current_user.get_id()
+    dir_path = None
+    if(type(dir) == Directory):
+        dir_path = decrypt(dir.dir_path, session[session_name+"key"], session[session_name+"iv"]).decode()
+    else:
+        dir_path = dir
+
+    for content in contents:
+        if(type(content) == Vault):
+            data_set = dataset(decrypt(content.vault_name, session[session_name+"key"], session[session_name+"iv"]).decode(), "vault", dir_path, "::", dir_path + "/" + content.vault_name, content.vault_name, "")
+            output.append(data_set.data_set)
+        if(type(content) == File):
+            data_set = dataset(decrypt(content.file_name, session[session_name+"key"], session[session_name+"iv"]).decode(), decrypt(content.file_ext, session[session_name+"key"], session[session_name+"iv"]).decode(), dir_path, content.file_data, dir_path+"/"+content.file_name, content.file_name, "")
+            output.append(data_set.data_set)
+        if(type(content) == Directory):
+            dir_name = decrypt(content.dir_name, session[session_name+"key"], session[session_name+"iv"]).decode()
+            data_set = dataset(dir_name, "folder", dir_path, "", dir_path, "", content.file_count)
+            output.append(data_set.data_set)
+    return output
+
+def get_dir_by_path(path):
+    dirs = current_user.directorys
+    session_name = current_user.user_manager_id + current_user.username + current_user.get_id()
+    for directory in dirs:
+        dir_path = decrypt(directory.dir_path, session[session_name+"key"], session[session_name+"iv"]).decode()
+        print(dir_path)
+        if str(dir_path) == str(path):
+            return directory
+    return None
+
+def get_dirs_by_path(path):
+    dirs = current_user.directorys
+    session_name = current_user.user_manager_id + current_user.username + current_user.get_id()
+    output = list()
+    for directory in dirs:
+        dir_path = decrypt(directory.dir_path, session[session_name+"key"], session[session_name+"iv"]).decode()
+        if str(dir_path) == str(path):
+            output.append(directory)
+    return output
+
+def search(search_path, search_request):
+    if(len(search_request) < 1):
+            return index_path(search_path)
+    elif(len(search_path) > 0):
+        dir = get_dir_by_path(search_path)
+        if(dir != None):
+            search_results = search_for_content(dir, search_request)
+            output_results = transform_content_to_set(search_results, dir)
+            return output_results
+    elif(len(search_path) < 1):
+        dirs = get_dirs_by_path("/"+search_request)
+        if(len(dirs) > 0):
+            output_results = transform_content_to_set(dirs, "/"+search_request)
+            return output_results
+    return list()
+
 @app.route("/home", methods=['GET', 'POST'])
 def home():
     if current_user.is_authenticated:
         calling_path = request.args.get('path')
-
-        absolute_path = calling_path
         
+        absolute_path = calling_path
+
+        search_path = request.args.get('search_dir')
+        search_request = request.args.get('search_input')
+
         home = home_form()
 
         vault_add = home.vault_add()
@@ -279,34 +354,35 @@ def home():
                     except KeyError as e:
                         flash("Logout timer expired")
                         return redirect(url_for('logout'))
-
-        dataset = transform_dataset(calling_path)
-
-        calling_path_splitter = list()
-        calling_path_splitter = calling_path.split("/")
-        calling_path_splitter[0] = "/"
-
-        if type(dataset) == Response:
-            return dataset
-        try:
-            if len(dataset) < 1:
-                return render_template('home.html', data_set=dataset, controller=controller_form ,home_add=home_add, current_folder_path=absolute_path, current_folders=calling_path_splitter, current_folder_href=calling_path, vault_add=vault_add, nothingfound="block")
+        #SEARCH <START>
+        if(search_path != None and search_request != None):
+            calling_path_splitter = list()
+            calling_path_splitter = search_path.split("/")
+            calling_path_splitter[0] = "/"
+            result = search(search_path, search_request)
+            if len(result) < 1:
+                return render_template('home.html', data_set=result, controller=controller_form ,home_add=home_add, current_folder_path=absolute_path, current_folders=calling_path_splitter, current_folder_href=calling_path, vault_add=vault_add, nothingfound="block", search="")
             else:
-                return render_template('home.html', data_set=dataset, controller=controller_form , home_add=home_add, current_folder_path=absolute_path, current_folders=calling_path_splitter, current_folder_href=calling_path, vault_add=vault_add, nothingfound="none")
-        except Exception as e:
-            return dataset
+                return render_template('home.html', data_set=result, controller=controller_form , home_add=home_add, current_folder_path=absolute_path, current_folders=calling_path_splitter, current_folder_href=calling_path, vault_add=vault_add, nothingfound="none", search="")
+        #SEARCH <END>
+        else:
+            dataset = transform_dataset(calling_path)
+
+            calling_path_splitter = list()
+            calling_path_splitter = calling_path.split("/")
+            calling_path_splitter[0] = "/"
+
+            if type(dataset) == Response:
+                return dataset
+            if len(dataset) < 1:
+                return render_template('home.html', data_set=dataset, controller=controller_form ,home_add=home_add, current_folder_path=absolute_path, current_folders=calling_path_splitter, current_folder_href=calling_path, vault_add=vault_add, nothingfound="block", search="")
+            else:
+                return render_template('home.html', data_set=dataset, controller=controller_form , home_add=home_add, current_folder_path=absolute_path, current_folders=calling_path_splitter, current_folder_href=calling_path, vault_add=vault_add, nothingfound="none", search="")
+        
+        return "This should have not gonna happen :("
     else:
         flash("Logout timer expired")
         return redirect(url_for("login"))
-
-def get_dir_by_path(path):
-    dirs = current_user.directorys
-    session_name = current_user.user_manager_id + current_user.username + current_user.get_id()
-    for directory in dirs:
-        dir_path = decrypt(directory.dir_path, session[session_name+"key"], session[session_name+"iv"]).decode()
-        if str(dir_path) == str(path):
-            return directory
-    return None
 
 @app.route("/upload", methods=['GET', 'POST'])
 def upload():
@@ -468,6 +544,7 @@ def get_dir_by_path_diff_user(path, user):
         if str(dir_path) == str(path):
             return directory
     return None
+
 
 @app.route("/share", methods=['GET', 'POST'])
 def share():

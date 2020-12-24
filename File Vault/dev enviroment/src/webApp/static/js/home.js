@@ -120,6 +120,16 @@ window.addEventListener('click', function (e){
   
   document.addEventListener("DOMContentLoaded", function(event) { 
     var clipboard = new ClipboardJS('#share_button');
+    var search_dir = document.getElementById("search_dir");
+    var url = window.location.href.replace("%2F", "/");
+    if(url.includes("?path=")){
+        var splitterURL = window.location.href.split("?path=")[1];
+        search_dir.value = splitterURL.replace("%2F", "/");
+        console.log(search_dir.value);
+    }else if(url.includes("search_dir=")){
+        var splitterURL = window.location.href.split("search_dir=")[1];
+        search_dir.value = splitterURL.replace("%2F", "/");
+    }
 });
 function gen_password(){
     var blur = document.getElementById("blur");

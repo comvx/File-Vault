@@ -25,7 +25,8 @@
 	<div class="filemanager">
 		<div class="controller">
 			<form class="search-form">
-				{{ controller.search_input(type="search", placeholder="Search", class="search-input") }}
+				{{ controller.search_input(placeholder="Search", class="search-input", value=search) }}
+				{{ controller.search_dir(class="search-dir", id="search_dir") }}
 				<button type="submit" class="search-button">
 				  <svg class="submit-button">
 					<use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#search">
@@ -110,8 +111,8 @@
 			
 				<button class="btn generate" id="generate">Generate</button>
 			</div>
-			<div id="add-format" class="add-format" style="display: none">
-				<div class="add-folder">
+			<div id="add-format" class="add-format" {% if current_folders|length > 1 %}style="display: none"{% else %}style="display: none; width: 225px!important;"{% endif %}>
+				<div class="add-folder" {% if current_folders|length > 1 %}{% else %}style="width: 100%!important;"{% endif %}>
 						<!--<li class="folders add_folder"><a class="folders"><span class="icon folder add"></span> <span class="details">{{ home_add.submit(class="btn btn-primary", type="submit") }}</span></a></li>
 						-->
 						<div class="container-folder-add">
@@ -133,35 +134,37 @@
 							</div>
 						</div>
 				</div>
+				{% if current_folders|length > 1 %}
 				<div class="add-vault">
-						<!--<li class="folders add_folder"><a class="folders"><span class="icon folder add"></span> <span class="details">{{ home_add.submit(class="btn btn-primary", type="submit") }}</span></a></li>
-						-->
-						<div class="container-vault-add">
-							<ul class="inputs">
-								<form method="POST">
-								{{ home_add.hidden_tag() }}
-								<li class="vn">
-									<span class="name">{{ vault_add.vault_name(class="folder_name", autocomplete="off", autocorrect="off", placeholder="enter name") }}</span>
-								</li>
-								<li class="vu">
-									<span class="name">{{ vault_add.vault_username(class="folder_name", autocomplete="off", autocorrect="off", placeholder="enter username") }}</span>
-								</li>
-								<li>
-									<span class="name">{{ vault_add.vault_password(class="folder_name", autocomplete="off", autocorrect="off", placeholder="enter password") }}</span>
-									<span class="gen_pass">{{ vault_add.vault_password_generate(class="field-button buttons", onClick="gen_password();", type="button") }}</span>
-								</li>
-								<li>
-									<span class="name">{{ vault_add.vault_tag(class="folder_name", autocomplete="off", autocorrect="off", placeholder="enter vault tag") }}</span>
-								</li>
-								{{ vault_add.submit(class="btn btn-primary", type="submit") }}
-								</form>
-							</ul>
-							<div class="header">
-								<svg class="icon-folder" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"width="58" height="58"viewBox="0 0 172 172"style=" fill:#000000;"><g fill="none" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><path d="M0,172v-172h172v172z" fill="none"></path><path d="M86,172c-47.49649,0 -86,-38.50351 -86,-86v0c0,-47.49649 38.50351,-86 86,-86v0c47.49649,0 86,38.50351 86,86v0c0,47.49649 -38.50351,86 -86,86z" fill="#1d1d1d"></path><g><path d="M86,141.20125c-30.43712,0 -55.20125,-24.76413 -55.20125,-55.20125c0,-30.43712 24.76413,-55.20125 55.20125,-55.20125c30.43712,0 55.20125,24.76413 55.20125,55.20125c0,30.43712 -24.76413,55.20125 -55.20125,55.20125z" fill="#eceff1"></path><path d="M86,32.21417c29.65864,0 53.78583,24.12719 53.78583,53.78583c0,29.65864 -24.12719,53.78583 -53.78583,53.78583c-29.65864,0 -53.78583,-24.12719 -53.78583,-53.78583c0,-29.65864 24.12719,-53.78583 53.78583,-53.78583M86,29.38333c-31.26938,0 -56.61667,25.34728 -56.61667,56.61667c0,31.26939 25.34728,56.61667 56.61667,56.61667c31.26939,0 56.61667,-25.34728 56.61667,-56.61667c0,-31.26938 -25.34728,-56.61667 -56.61667,-56.61667z" fill="#cfd8dc"></path><path d="M86,129.87792c-24.19513,0 -43.87792,-19.68278 -43.87792,-43.87792c0,-24.19513 19.68278,-43.87792 43.87792,-43.87792c24.19513,0 43.87792,19.68278 43.87792,43.87792c0,24.19513 -19.68278,43.87792 -43.87792,43.87792z" fill="#1976d2"></path><path d="M86,43.5375c23.41382,0 42.4625,19.04868 42.4625,42.4625c0,23.41382 -19.04868,42.4625 -42.4625,42.4625c-23.41382,0 -42.4625,-19.04868 -42.4625,-42.4625c0,-23.41382 19.04868,-42.4625 42.4625,-42.4625M86,40.70667c-25.01607,0 -45.29333,20.27726 -45.29333,45.29333c0,25.01607 20.27726,45.29333 45.29333,45.29333c25.01607,0 45.29333,-20.27726 45.29333,-45.29333c0,-25.01607 -20.27726,-45.29333 -45.29333,-45.29333z" fill="#1565c0"></path><path d="M86,52.03c-18.76111,0 -33.97,15.20889 -33.97,33.97c0,18.76111 15.20889,33.97 33.97,33.97c18.76111,0 33.97,-15.20889 33.97,-33.97c0,-18.76111 -15.20889,-33.97 -33.97,-33.97z" fill="#cfd8dc"></path><path d="M86,69.015c-9.38056,0 -16.985,7.60444 -16.985,16.985c0,9.38056 7.60444,16.985 16.985,16.985c9.38056,0 16.985,-7.60444 16.985,-16.985c0,-9.38056 -7.60444,-16.985 -16.985,-16.985z" fill="#b0bec5"></path><g><path d="M79.18052,110.31969v-25.7804l4.71051,-4.71051l-4.71051,-4.71334v-13.43513h13.63895v25.7804l-4.71051,4.71334l4.71051,4.71051v13.43514z" fill="#607d8b"></path><path d="M91.40406,63.09573v23.779l-3.29509,3.29509l-2.0014,2.0014l2.0014,2.0014l3.29509,3.29509v11.43374h-10.80812v-23.779l3.29509,-3.29509l2.0014,-2.0014l-2.0014,-2.0014l-3.29509,-3.29509v-11.43374h10.80812M94.23489,60.26489h-16.46979v15.43653l4.12452,4.12452l-4.12452,4.12452v27.7818h16.46979v-15.43653l-4.12452,-4.12452l4.12452,-4.12452v-27.7818z" fill="#455a64"></path></g></g></g></svg>
-								<h2 class="title">| create a vault</h2>
-							</div>
+					<!--<li class="folders add_folder"><a class="folders"><span class="icon folder add"></span> <span class="details">{{ home_add.submit(class="btn btn-primary", type="submit") }}</span></a></li>
+					-->
+					<div class="container-vault-add">
+						<ul class="inputs">
+							<form method="POST">
+							{{ home_add.hidden_tag() }}
+							<li class="vn">
+								<span class="name">{{ vault_add.vault_name(class="folder_name", autocomplete="off", autocorrect="off", placeholder="enter name") }}</span>
+							</li>
+							<li class="vu">
+								<span class="name">{{ vault_add.vault_username(class="folder_name", autocomplete="off", autocorrect="off", placeholder="enter username") }}</span>
+							</li>
+							<li>
+								<span class="name">{{ vault_add.vault_password(class="folder_name", autocomplete="off", autocorrect="off", placeholder="enter password") }}</span>
+								<span class="gen_pass">{{ vault_add.vault_password_generate(class="field-button buttons", onClick="gen_password();", type="button") }}</span>
+							</li>
+							<li>
+								<span class="name">{{ vault_add.vault_tag(class="folder_name", autocomplete="off", autocorrect="off", placeholder="enter vault tag") }}</span>
+							</li>
+							{{ vault_add.submit(class="btn btn-primary", type="submit") }}
+							</form>
+						</ul>
+						<div class="header">
+							<svg class="icon-folder" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"width="58" height="58"viewBox="0 0 172 172"style=" fill:#000000;"><g fill="none" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><path d="M0,172v-172h172v172z" fill="none"></path><path d="M86,172c-47.49649,0 -86,-38.50351 -86,-86v0c0,-47.49649 38.50351,-86 86,-86v0c47.49649,0 86,38.50351 86,86v0c0,47.49649 -38.50351,86 -86,86z" fill="#1d1d1d"></path><g><path d="M86,141.20125c-30.43712,0 -55.20125,-24.76413 -55.20125,-55.20125c0,-30.43712 24.76413,-55.20125 55.20125,-55.20125c30.43712,0 55.20125,24.76413 55.20125,55.20125c0,30.43712 -24.76413,55.20125 -55.20125,55.20125z" fill="#eceff1"></path><path d="M86,32.21417c29.65864,0 53.78583,24.12719 53.78583,53.78583c0,29.65864 -24.12719,53.78583 -53.78583,53.78583c-29.65864,0 -53.78583,-24.12719 -53.78583,-53.78583c0,-29.65864 24.12719,-53.78583 53.78583,-53.78583M86,29.38333c-31.26938,0 -56.61667,25.34728 -56.61667,56.61667c0,31.26939 25.34728,56.61667 56.61667,56.61667c31.26939,0 56.61667,-25.34728 56.61667,-56.61667c0,-31.26938 -25.34728,-56.61667 -56.61667,-56.61667z" fill="#cfd8dc"></path><path d="M86,129.87792c-24.19513,0 -43.87792,-19.68278 -43.87792,-43.87792c0,-24.19513 19.68278,-43.87792 43.87792,-43.87792c24.19513,0 43.87792,19.68278 43.87792,43.87792c0,24.19513 -19.68278,43.87792 -43.87792,43.87792z" fill="#1976d2"></path><path d="M86,43.5375c23.41382,0 42.4625,19.04868 42.4625,42.4625c0,23.41382 -19.04868,42.4625 -42.4625,42.4625c-23.41382,0 -42.4625,-19.04868 -42.4625,-42.4625c0,-23.41382 19.04868,-42.4625 42.4625,-42.4625M86,40.70667c-25.01607,0 -45.29333,20.27726 -45.29333,45.29333c0,25.01607 20.27726,45.29333 45.29333,45.29333c25.01607,0 45.29333,-20.27726 45.29333,-45.29333c0,-25.01607 -20.27726,-45.29333 -45.29333,-45.29333z" fill="#1565c0"></path><path d="M86,52.03c-18.76111,0 -33.97,15.20889 -33.97,33.97c0,18.76111 15.20889,33.97 33.97,33.97c18.76111,0 33.97,-15.20889 33.97,-33.97c0,-18.76111 -15.20889,-33.97 -33.97,-33.97z" fill="#cfd8dc"></path><path d="M86,69.015c-9.38056,0 -16.985,7.60444 -16.985,16.985c0,9.38056 7.60444,16.985 16.985,16.985c9.38056,0 16.985,-7.60444 16.985,-16.985c0,-9.38056 -7.60444,-16.985 -16.985,-16.985z" fill="#b0bec5"></path><g><path d="M79.18052,110.31969v-25.7804l4.71051,-4.71051l-4.71051,-4.71334v-13.43513h13.63895v25.7804l-4.71051,4.71334l4.71051,4.71051v13.43514z" fill="#607d8b"></path><path d="M91.40406,63.09573v23.779l-3.29509,3.29509l-2.0014,2.0014l2.0014,2.0014l3.29509,3.29509v11.43374h-10.80812v-23.779l3.29509,-3.29509l2.0014,-2.0014l-2.0014,-2.0014l-3.29509,-3.29509v-11.43374h10.80812M94.23489,60.26489h-16.46979v15.43653l4.12452,4.12452l-4.12452,4.12452v27.7818h16.46979v-15.43653l-4.12452,-4.12452l4.12452,-4.12452v-27.7818z" fill="#455a64"></path></g></g></g></svg>
+							<h2 class="title">| create a vault</h2>
 						</div>
-				</div>
+					</div>
+				</div>	
+				{% endif %}
 			</div>
 		</div>
 		<ul class="data animated" style="">
@@ -223,7 +226,7 @@
 		{% endwith %}
 		<div class="nothingfound" style="display: {{ nothingfound }};">
 			<div class="nofiles"></div>
-			<span>No data here.</span>
+			<span>Nothing found!</span>
 		</div>
 
 	</div>

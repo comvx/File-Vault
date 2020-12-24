@@ -20,6 +20,7 @@ class data_upload(FlaskForm):
 class home_form():
     class controller(FlaskForm):
         search_input = StringField('')
+        search_dir = StringField('')
     class add(FlaskForm):
         folder_name_input = StringField("Folder name")
         folder_tag_input = StringField('')
