@@ -154,12 +154,10 @@ def transform_dataset(absolute_path):
                             data_set = dataset(dir_name, "folder", dir_path, "", dir_path, "", directory.file_count)
                             output.append(data_set.data_set)
         except KeyError as e:
-            flash("Logout timer expired")
-            return redirect(url_for('logout'))
+            return None
         return output
     else:
-        flash("Logout timer expired")
-        return redirect("/")
+        return None
 
 def check_for_twice_name(path, name):
     dirs = current_user.directorys
@@ -218,6 +216,10 @@ def search_for_content(dir, name):
     output = list()
 
     for file in files:
+        if(content_name in file.file_name and file.file_share == False):
+            output.append(file)
+    for vault in vaults:
+        if(content_name in vault.vault_name and vault.vault_share == False):
         if(file.file_name == content_name and file.file_share == False):
             output.append(file)
     for vault in vaults:
@@ -227,6 +229,7 @@ def search_for_content(dir, name):
         dir_path = decrypt(dir.dir_path, session[session_name+"key"], session[session_name+"iv"]).decode()
         directory_path = decrypt(directory.dir_path, session[session_name+"key"], session[session_name+"iv"]).decode()
         index = directory_path.rindex("/")
+        if(directory_path[0:index] == dir_path and content_name in directory.dir_name):
         if(directory_path[0:index] == dir_path and directory.dir_name == content_name):
             output.append(directory)
     return output
@@ -274,6 +277,24 @@ def get_dirs_by_path(path):
     return output
 
 def search(search_path, search_request):
+    if current_user.is_authenticated:
+        if(len(search_request) < 1):
+                return index_path(search_path)
+        elif(len(search_path) > 0):
+            dir = get_dir_by_path(search_path)
+            if(dir != None):
+                search_results = search_for_content(dir, search_request)
+                output_results = transform_content_to_set(search_results, dir)
+                return output_results
+        elif(len(search_path) < 1):
+            dirs = get_dirs_by_path("/"+search_request)
+            if(len(dirs) > 0):
+                output_results = transform_content_to_set(dirs, "/"+search_request)
+                return output_results
+        return list()
+    else:
+        flash("Logout timer expired")
+        return redirect(url_for("login"))
     if(len(search_request) < 1):
             return index_path(search_path)
     elif(len(search_path) > 0):
@@ -352,6 +373,32 @@ def home():
             calling_path_splitter = search_path.split("/")
             calling_path_splitter[0] = "/"
             result = search(search_path, search_request)
+            if(search_path != None and search_request != None):
+                calling_path_splitter = list()
+                calling_path_splitter = search_path.split("/")
+                calling_path_splitter[0] = "/"
+                result = search(search_path, search_request)
+                if(type(result) == Response):
+                    flash("Logout timer expired")
+                    return redirect(url_for("index"))
+                elif(current_user.is_authenticated):
+                    controller_form.search_input.data = search_request
+                    if len(result) < 1:
+                        return render_template('home.html', data_set=result, controller=controller_form ,home_add=home_add, current_folder_path=absolute_path, current_folders=calling_path_splitter, current_folder_href=calling_path, vault_add=vault_add, nothingfound="block", search="")
+                    else:
+                        return render_template('home.html', data_set=result, controller=controller_form , home_add=home_add, current_folder_path=absolute_path, current_folders=calling_path_splitter, current_folder_href=calling_path, vault_add=vault_add, nothingfound="none", search="")
+                else:
+                    flash("Logout timer expired")
+                    return redirect(url_for("index"))
+        #SEARCH <END>
+        else:
+            dataset = transform_dataset(calling_path)
+
+        dataset = transform_dataset(calling_path)
+
+        calling_path_splitter = list()
+        calling_path_splitter = calling_path.split("/")
+        calling_path_splitter[0] = "/"
             if len(result) < 1:
                 return render_template('home.html', data_set=result, controller=controller_form ,home_add=home_add, current_folder_path=absolute_path, current_folders=calling_path_splitter, current_folder_href=calling_path, vault_add=vault_add, nothingfound="block", search="")
             else:
@@ -369,6 +416,19 @@ def home():
             if len(dataset) < 1:
                 return render_template('home.html', data_set=dataset, controller=controller_form ,home_add=home_add, current_folder_path=absolute_path, current_folders=calling_path_splitter, current_folder_href=calling_path, vault_add=vault_add, nothingfound="block", search="")
             else:
+                return render_template('home.html', data_set=dataset, controller=controller_form , home_add=home_add, current_folder_path=absolute_path, current_folders=calling_path_splitter, current_folder_href=calling_path, vault_add=vault_add, nothingfound="none")
+        except Exception as e:
+            return dataset
+            if(dataset != None):
+                if len(dataset) < 1:
+                    return render_template('home.html', data_set=dataset, controller=controller_form ,home_add=home_add, current_folder_path=absolute_path, current_folders=calling_path_splitter, current_folder_href=calling_path, vault_add=vault_add, nothingfound="block", search="")
+                else:
+                    return render_template('home.html', data_set=dataset, controller=controller_form , home_add=home_add, current_folder_path=absolute_path, current_folders=calling_path_splitter, current_folder_href=calling_path, vault_add=vault_add, nothingfound="none", search="")
+            else:
+                flash("Logout timer expired")
+                return redirect(url_for("index"))    
+
+        return "This should have not gonna happen :("
                 return render_template('home.html', data_set=dataset, controller=controller_form , home_add=home_add, current_folder_path=absolute_path, current_folders=calling_path_splitter, current_folder_href=calling_path, vault_add=vault_add, nothingfound="none", search="")
         
         return "This should have not gonna happen :("
