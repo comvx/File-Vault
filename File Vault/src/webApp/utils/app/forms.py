@@ -4,16 +4,23 @@ from flask_login import current_user
 from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField, Label, FileField
 from wtforms.validators import DataRequired, Length, EqualTo, ValidationError
 
-class auth(FlaskForm):
-    username_input = StringField('Username', validators=[DataRequired()])
-    password_input = PasswordField('Password', validators=[DataRequired()])
-    submit = SubmitField('auth')
+class auth():
+    class login(FlaskForm):
+        username_input = StringField('Username', validators=[DataRequired()])
+        password_input = PasswordField('Password', validators=[DataRequired()])
+        submit = SubmitField('auth')
+    class register(FlaskForm):
+        username_input = StringField('Username', validators=[DataRequired()])
+        password_input = PasswordField('Password', validators=[DataRequired()])
+        password_input_re = PasswordField('PasswordRE', validators=[DataRequired()])
+        submit = SubmitField('auth')
 class data_upload(FlaskForm):
     data = FileField("inputFile", validators=[DataRequired()])
     submit = SubmitField('Upload')
 class home_form():
     class controller(FlaskForm):
         search_input = StringField('')
+        search_dir = StringField('')
     class add(FlaskForm):
         folder_name_input = StringField("Folder name")
         folder_tag_input = StringField('')
@@ -27,5 +34,4 @@ class home_form():
         submit = SubmitField('Create')
 class credit_card(FlaskForm):
     password = StringField("Vault password")
-    generate = SubmitField('Yes')
-    submit = SubmitField('Create')
+    submit = SubmitField('Save')

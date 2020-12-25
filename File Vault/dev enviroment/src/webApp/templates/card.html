@@ -1,43 +1,70 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <meta http-equiv="refresh" content="120">
   <title>Vault | Name: {{ data.username }}</title>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="/static/css/card.css">
   <link rel="stylesheet" href="/static/css/popup.css">
-
+  <link href="/static/css/pwdgen.css" rel="stylesheet"/>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600|Abel">
+  <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Montserrat&amp;display=swap'>
   <link rel="icon" type="image/png" href="/static/images/shield_logo.png">
 
 </head>
 <body class="align bg" id="bg">
   {% if return_value != "" %}
-  <div id="cd-popup" class="cd-popup" role="alert">
-      <div class="cd-popup-container">
-        <p>Are you sure you want to generate a new password?</p>
-        <form method="post" class="form">
-          {{ form.hidden_tag() }}
-        <ul class="cd-buttons">
-          <li><a>{{ form.generate(class="field-button buttons", onclick="close_popup()") }}</a></li>
-          <li><a><button type="button" onclick="close_popup()" class="field-button buttons">NO</button></a></li>
-        </ul>
-        </form>
-        <a id="close_pop" class="cd-popup-close img-replace">Close</a>
-      </div>
-	</div>
   <a href="{{ return_value }}" type="button" class="return" style="position: absolute;"><img class="return" src="/static/images/return.png"></a>
   {% endif %}
+  <div style="visibility: hidden;display:none;" class="blur" id="blur"></div>
+  <div style="visibility: hidden;display:none;transform: translate(-50%, -61%)!important;" class="container" id="container">
+    <div class="close_pwdgen" id="close_pwdgen" onclick="close_gen('card__number');">
+      <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="35" height="35" viewBox="0 0 172 172" style="transform: rotate(45deg); fill:#000000;"><g fill="none" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><path d="M0,172v-172h172v172z" fill="none"></path><g id="original-icon" fill="#cc2e2e"><path d="M86,6.88c-43.62952,0 -79.12,35.49048 -79.12,79.12c0,43.62952 35.49048,79.12 79.12,79.12c43.62952,0 79.12,-35.49048 79.12,-79.12c0,-43.62952 -35.49048,-79.12 -79.12,-79.12zM127.28,89.44h-37.84v37.84h-6.88v-37.84h-37.84v-6.88h37.84v-37.84h6.88v37.84h37.84z"></path></g></g></svg>
+    </div>
+    <div class="result">
+      <div class="result__title field-title">Generated Password</div>
+      <div class="result__info right">click to copy</div>
+      <div class="result__info left">copied</div>
+      <div class="result__viewbox" id="result">CLICK GENERATE</div>
+      <button id="copy-btn" style="--x: 0; --y: 0"><i class="far fa-copy"></i></button>
+    </div>
+    <div class="length range__slider" data-min="4" data-max="32">
+      <div class="length__title field-title" data-length='0'>length:</div>
+      <input id="slider" type="range" min="4" max="32" value="16" />
+    </div>
+  
+    <div class="settings_pane">
+      <span class="settings__title field-title">settings</span>
+      <div class="setting">
+        <input type="checkbox" id="uppercase" checked />
+        <label for="uppercase">ABZ</label>
+      </div>
+      <div class="setting">
+        <input type="checkbox" id="lowercase" checked />
+        <label for="lowercase">abz</label>
+      </div>
+      <div class="setting">
+        <input type="checkbox" id="number" checked />
+        <label for="number">123</label>
+      </div>
+      <div class="setting">
+        <input type="checkbox" id="symbol" />
+        <label for="symbol">?&()!</label>
+      </div>
+    </div>
+  
+    <button class="btn generate" id="generate" onclick="setPWD();">Generate</button>
+  </div>
   <div class="grid align__item">
     <div class="card">
-
       <header class="card__header">
         <h3 class="card__title">Vault Details</h3>
         <svg xmlns="http://www.w3.org/2000/svg" class="card__logo" width="140" height="43" viewBox="0 0 175.7 53.9"></svg>
 
       </header>
 
-      <form method="post" class="form">
+      <form method="post">
         {{ form.hidden_tag() }}
         <div class="card__number form__field">
           <label for="card__number" class="card__number__label">Vault Password</label>
@@ -45,10 +72,11 @@
           <div class="value-container">
             <button type="button"class="field-button copy" onclick="show_alert()" data-clipboard-text="{{ data.password }}">Copy</button>
             {% if return_value != "" %}
-            <button type="button" onclick="show_popup()" class="field-button">Generate</button>
+            <button type="button" onclick="gen_password()" class="field-button">Generate</button>
+            {{ form.submit(class="field-button", type="submit") }}
             {% endif %}
           </div>
-        </div>
+        </form>
 
         <div>
           <div class="card__expiration form__field">
@@ -61,11 +89,6 @@
             <span style="color:#fff;">{{ data.name }}</span>
 
           </div>
-          <div class="value-container">
-            <button class="field-button">Copy</button>
-            <button class="field-button">Edit</button>
-            <button class="field-button">Save</button>
-          </div>
         </div>
 
         <div class="card__ccv form__field">
@@ -73,7 +96,7 @@
           <span style="color:#fff;margin-left: 3px;" class="card__ccv__input" >{{ data.id }}</span>
         </div>
 
-      </form>
+      </div>
     </div>
     <div id="alert" class="alert success-alert" style="display: none;">
       <a type="button" id="message">Password copied!</a>
@@ -85,4 +108,5 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
 <script  src="/static/js/cards.js"></script>
 <script src="/static/js/clipboard.min.js"></script>
+<script src="/static/js/pwdgen.js"></script>
 </html>

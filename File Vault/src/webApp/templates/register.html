@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" >
 <head>
+  <meta http-equiv="refresh" content="120">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Vault - Register</title>
@@ -35,6 +36,15 @@
                 <img src='https://s3-us-west-2.amazonaws.com/s.cdpn.io/217233/lock_icon_copy.png'>
               </div>
               {{ form.password_input(placeholder='Password', type='password') }}
+              <div class='validation'>
+                <img src='https://s3-us-west-2.amazonaws.com/s.cdpn.io/217233/tick.png'>
+              </div>
+            </div>
+            <div class='login_fields__password'>
+              <div class='icon'>
+                <img src='https://s3-us-west-2.amazonaws.com/s.cdpn.io/217233/lock_icon_copy.png'>
+              </div>
+              {{ form.password_input_re(placeholder='Password recap', type='password') }}
               <div class='validation'>
                 <img src='https://s3-us-west-2.amazonaws.com/s.cdpn.io/217233/tick.png'>
               </div>

@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head lang="en">
+	<meta http-equiv="refresh" content="120">
+
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 	<title>Vault | by comvx</title>
@@ -8,19 +10,23 @@
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css">
 	<!-- Include our stylesheet -->
 	<link href="/static/css/home.css" rel="stylesheet"/>
+	<link href="/static/css/pwdgen.css" rel="stylesheet"/>
 	<link href="/static/css/selectbox.min.css" rel="stylesheet"/>
 	<link rel="icon" type="image/png" href="/static/images/shield_logo.png">
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 	<link rel="preconnect" href="https://fonts.gstatic.com">
 	<link href="https://fonts.googleapis.com/css2?family=Quicksand&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed&display=swap" rel="stylesheet">
+<link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Montserrat&amp;display=swap'>
 
 </head>
 <body>
+	<div style="visibility: hidden;display:none;" class="blur" id="blur"></div>
 	<div class="filemanager">
 		<div class="controller">
 			<form class="search-form">
-				{{ controller.search_input(type="search", placeholder="Search", class="search-input") }}
+				{{ controller.search_input(placeholder="Search", class="search-input", value=search) }}
+				{{ controller.search_dir(class="search-dir", id="search_dir") }}
 				<button type="submit" class="search-button">
 				  <svg class="submit-button">
 					<use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#search">
@@ -67,8 +73,46 @@
 			<div id="add-icon" class="add-icon" type="button" onclick="show_add_format();">
 				<svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="35" height="35" viewBox="0 0 172 172" style=" fill:#000000;"><g fill="none" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><path d="M0,172v-172h172v172z" fill="none"></path><g id="original-icon" fill="#2ecc71"><path d="M86,6.88c-43.62952,0 -79.12,35.49048 -79.12,79.12c0,43.62952 35.49048,79.12 79.12,79.12c43.62952,0 79.12,-35.49048 79.12,-79.12c0,-43.62952 -35.49048,-79.12 -79.12,-79.12zM127.28,89.44h-37.84v37.84h-6.88v-37.84h-37.84v-6.88h37.84v-37.84h6.88v37.84h37.84z"></path></g></g></svg>
 			</div>
-			<div id="add-format" class="add-format" style="display: none">
-				<div class="add-folder">
+			<div style="visibility: hidden;display:none;" class="container" id="container">
+				<div class="close_pwdgen" id="close_pwdgen" onclick="close_gen('vault_password');">
+					<svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="35" height="35" viewBox="0 0 172 172" style="transform: rotate(45deg); fill:#000000;"><g fill="none" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><path d="M0,172v-172h172v172z" fill="none"></path><g id="original-icon" fill="#cc2e2e"><path d="M86,6.88c-43.62952,0 -79.12,35.49048 -79.12,79.12c0,43.62952 35.49048,79.12 79.12,79.12c43.62952,0 79.12,-35.49048 79.12,-79.12c0,-43.62952 -35.49048,-79.12 -79.12,-79.12zM127.28,89.44h-37.84v37.84h-6.88v-37.84h-37.84v-6.88h37.84v-37.84h6.88v37.84h37.84z"></path></g></g></svg>
+				</div>
+				<div class="result">
+					<div class="result__title field-title">Generated Password</div>
+					<div class="result__info right">click to copy</div>
+					<div class="result__info left">copied</div>
+					<div class="result__viewbox" id="result">CLICK GENERATE</div>
+					<button id="copy-btn" style="--x: 0; --y: 0"><i class="far fa-copy"></i></button>
+				</div>
+				<div class="length range__slider" data-min="4" data-max="32">
+					<div class="length__title field-title" data-length='0'>length:</div>
+					<input id="slider" type="range" min="4" max="32" value="16" />
+				</div>
+			
+				<div class="settings_pane">
+					<span class="settings__title field-title">settings</span>
+					<div class="setting">
+						<input type="checkbox" id="uppercase" checked />
+						<label for="uppercase">ABZ</label>
+					</div>
+					<div class="setting">
+						<input type="checkbox" id="lowercase" checked />
+						<label for="lowercase">abz</label>
+					</div>
+					<div class="setting">
+						<input type="checkbox" id="number" checked />
+						<label for="number">123</label>
+					</div>
+					<div class="setting">
+						<input type="checkbox" id="symbol" />
+						<label for="symbol">?&()!</label>
+					</div>
+				</div>
+			
+				<button class="btn generate" id="generate">Generate</button>
+			</div>
+			<div id="add-format" class="add-format" {% if current_folders|length > 1 %}style="display: none"{% else %}style="display: none; width: 225px!important;"{% endif %}>
+				<div class="add-folder" {% if current_folders|length > 1 %}{% else %}style="width: 100%!important;"{% endif %}>
 						<!--<li class="folders add_folder"><a class="folders"><span class="icon folder add"></span> <span class="details">{{ home_add.submit(class="btn btn-primary", type="submit") }}</span></a></li>
 						-->
 						<div class="container-folder-add">
@@ -90,35 +134,37 @@
 							</div>
 						</div>
 				</div>
+				{% if current_folders|length > 1 %}
 				<div class="add-vault">
-						<!--<li class="folders add_folder"><a class="folders"><span class="icon folder add"></span> <span class="details">{{ home_add.submit(class="btn btn-primary", type="submit") }}</span></a></li>
-						-->
-						<div class="container-vault-add">
-							<ul class="inputs">
-								<form method="POST">
-								{{ home_add.hidden_tag() }}
-								<li class="vn">
-									<span class="name">{{ vault_add.vault_name(class="folder_name", autocomplete="off", autocorrect="off", placeholder="enter name") }}</span>
-								</li>
-								<li class="vu">
-									<span class="name">{{ vault_add.vault_username(class="folder_name", autocomplete="off", autocorrect="off", placeholder="enter username") }}</span>
-								</li>
-								<li>
-									<span class="name">{{ vault_add.vault_password(class="folder_name", autocomplete="off", autocorrect="off", placeholder="enter password") }}</span>
-									<span class="gen_pass">{{ vault_add.vault_password_generate(class="field-button buttons") }}</span>
-								</li>
-								<li>
-									<span class="name">{{ vault_add.vault_tag(class="folder_name", autocomplete="off", autocorrect="off", placeholder="enter vault tag") }}</span>
-								</li>
-								{{ vault_add.submit(class="btn btn-primary", type="submit") }}
-								</form>
-							</ul>
-							<div class="header">
-								<svg class="icon-folder" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"width="58" height="58"viewBox="0 0 172 172"style=" fill:#000000;"><g fill="none" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><path d="M0,172v-172h172v172z" fill="none"></path><path d="M86,172c-47.49649,0 -86,-38.50351 -86,-86v0c0,-47.49649 38.50351,-86 86,-86v0c47.49649,0 86,38.50351 86,86v0c0,47.49649 -38.50351,86 -86,86z" fill="#1d1d1d"></path><g><path d="M86,141.20125c-30.43712,0 -55.20125,-24.76413 -55.20125,-55.20125c0,-30.43712 24.76413,-55.20125 55.20125,-55.20125c30.43712,0 55.20125,24.76413 55.20125,55.20125c0,30.43712 -24.76413,55.20125 -55.20125,55.20125z" fill="#eceff1"></path><path d="M86,32.21417c29.65864,0 53.78583,24.12719 53.78583,53.78583c0,29.65864 -24.12719,53.78583 -53.78583,53.78583c-29.65864,0 -53.78583,-24.12719 -53.78583,-53.78583c0,-29.65864 24.12719,-53.78583 53.78583,-53.78583M86,29.38333c-31.26938,0 -56.61667,25.34728 -56.61667,56.61667c0,31.26939 25.34728,56.61667 56.61667,56.61667c31.26939,0 56.61667,-25.34728 56.61667,-56.61667c0,-31.26938 -25.34728,-56.61667 -56.61667,-56.61667z" fill="#cfd8dc"></path><path d="M86,129.87792c-24.19513,0 -43.87792,-19.68278 -43.87792,-43.87792c0,-24.19513 19.68278,-43.87792 43.87792,-43.87792c24.19513,0 43.87792,19.68278 43.87792,43.87792c0,24.19513 -19.68278,43.87792 -43.87792,43.87792z" fill="#1976d2"></path><path d="M86,43.5375c23.41382,0 42.4625,19.04868 42.4625,42.4625c0,23.41382 -19.04868,42.4625 -42.4625,42.4625c-23.41382,0 -42.4625,-19.04868 -42.4625,-42.4625c0,-23.41382 19.04868,-42.4625 42.4625,-42.4625M86,40.70667c-25.01607,0 -45.29333,20.27726 -45.29333,45.29333c0,25.01607 20.27726,45.29333 45.29333,45.29333c25.01607,0 45.29333,-20.27726 45.29333,-45.29333c0,-25.01607 -20.27726,-45.29333 -45.29333,-45.29333z" fill="#1565c0"></path><path d="M86,52.03c-18.76111,0 -33.97,15.20889 -33.97,33.97c0,18.76111 15.20889,33.97 33.97,33.97c18.76111,0 33.97,-15.20889 33.97,-33.97c0,-18.76111 -15.20889,-33.97 -33.97,-33.97z" fill="#cfd8dc"></path><path d="M86,69.015c-9.38056,0 -16.985,7.60444 -16.985,16.985c0,9.38056 7.60444,16.985 16.985,16.985c9.38056,0 16.985,-7.60444 16.985,-16.985c0,-9.38056 -7.60444,-16.985 -16.985,-16.985z" fill="#b0bec5"></path><g><path d="M79.18052,110.31969v-25.7804l4.71051,-4.71051l-4.71051,-4.71334v-13.43513h13.63895v25.7804l-4.71051,4.71334l4.71051,4.71051v13.43514z" fill="#607d8b"></path><path d="M91.40406,63.09573v23.779l-3.29509,3.29509l-2.0014,2.0014l2.0014,2.0014l3.29509,3.29509v11.43374h-10.80812v-23.779l3.29509,-3.29509l2.0014,-2.0014l-2.0014,-2.0014l-3.29509,-3.29509v-11.43374h10.80812M94.23489,60.26489h-16.46979v15.43653l4.12452,4.12452l-4.12452,4.12452v27.7818h16.46979v-15.43653l-4.12452,-4.12452l4.12452,-4.12452v-27.7818z" fill="#455a64"></path></g></g></g></svg>
-								<h2 class="title">| create a vault</h2>
-							</div>
+					<!--<li class="folders add_folder"><a class="folders"><span class="icon folder add"></span> <span class="details">{{ home_add.submit(class="btn btn-primary", type="submit") }}</span></a></li>
+					-->
+					<div class="container-vault-add">
+						<ul class="inputs">
+							<form method="POST">
+							{{ home_add.hidden_tag() }}
+							<li class="vn">
+								<span class="name">{{ vault_add.vault_name(class="folder_name", autocomplete="off", autocorrect="off", placeholder="enter name") }}</span>
+							</li>
+							<li class="vu">
+								<span class="name">{{ vault_add.vault_username(class="folder_name", autocomplete="off", autocorrect="off", placeholder="enter username") }}</span>
+							</li>
+							<li>
+								<span class="name">{{ vault_add.vault_password(class="folder_name", autocomplete="off", autocorrect="off", placeholder="enter password") }}</span>
+								<span class="gen_pass">{{ vault_add.vault_password_generate(class="field-button buttons", onClick="gen_password();", type="button") }}</span>
+							</li>
+							<li>
+								<span class="name">{{ vault_add.vault_tag(class="folder_name", autocomplete="off", autocorrect="off", placeholder="enter vault tag") }}</span>
+							</li>
+							{{ vault_add.submit(class="btn btn-primary", type="submit") }}
+							</form>
+						</ul>
+						<div class="header">
+							<svg class="icon-folder" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"width="58" height="58"viewBox="0 0 172 172"style=" fill:#000000;"><g fill="none" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><path d="M0,172v-172h172v172z" fill="none"></path><path d="M86,172c-47.49649,0 -86,-38.50351 -86,-86v0c0,-47.49649 38.50351,-86 86,-86v0c47.49649,0 86,38.50351 86,86v0c0,47.49649 -38.50351,86 -86,86z" fill="#1d1d1d"></path><g><path d="M86,141.20125c-30.43712,0 -55.20125,-24.76413 -55.20125,-55.20125c0,-30.43712 24.76413,-55.20125 55.20125,-55.20125c30.43712,0 55.20125,24.76413 55.20125,55.20125c0,30.43712 -24.76413,55.20125 -55.20125,55.20125z" fill="#eceff1"></path><path d="M86,32.21417c29.65864,0 53.78583,24.12719 53.78583,53.78583c0,29.65864 -24.12719,53.78583 -53.78583,53.78583c-29.65864,0 -53.78583,-24.12719 -53.78583,-53.78583c0,-29.65864 24.12719,-53.78583 53.78583,-53.78583M86,29.38333c-31.26938,0 -56.61667,25.34728 -56.61667,56.61667c0,31.26939 25.34728,56.61667 56.61667,56.61667c31.26939,0 56.61667,-25.34728 56.61667,-56.61667c0,-31.26938 -25.34728,-56.61667 -56.61667,-56.61667z" fill="#cfd8dc"></path><path d="M86,129.87792c-24.19513,0 -43.87792,-19.68278 -43.87792,-43.87792c0,-24.19513 19.68278,-43.87792 43.87792,-43.87792c24.19513,0 43.87792,19.68278 43.87792,43.87792c0,24.19513 -19.68278,43.87792 -43.87792,43.87792z" fill="#1976d2"></path><path d="M86,43.5375c23.41382,0 42.4625,19.04868 42.4625,42.4625c0,23.41382 -19.04868,42.4625 -42.4625,42.4625c-23.41382,0 -42.4625,-19.04868 -42.4625,-42.4625c0,-23.41382 19.04868,-42.4625 42.4625,-42.4625M86,40.70667c-25.01607,0 -45.29333,20.27726 -45.29333,45.29333c0,25.01607 20.27726,45.29333 45.29333,45.29333c25.01607,0 45.29333,-20.27726 45.29333,-45.29333c0,-25.01607 -20.27726,-45.29333 -45.29333,-45.29333z" fill="#1565c0"></path><path d="M86,52.03c-18.76111,0 -33.97,15.20889 -33.97,33.97c0,18.76111 15.20889,33.97 33.97,33.97c18.76111,0 33.97,-15.20889 33.97,-33.97c0,-18.76111 -15.20889,-33.97 -33.97,-33.97z" fill="#cfd8dc"></path><path d="M86,69.015c-9.38056,0 -16.985,7.60444 -16.985,16.985c0,9.38056 7.60444,16.985 16.985,16.985c9.38056,0 16.985,-7.60444 16.985,-16.985c0,-9.38056 -7.60444,-16.985 -16.985,-16.985z" fill="#b0bec5"></path><g><path d="M79.18052,110.31969v-25.7804l4.71051,-4.71051l-4.71051,-4.71334v-13.43513h13.63895v25.7804l-4.71051,4.71334l4.71051,4.71051v13.43514z" fill="#607d8b"></path><path d="M91.40406,63.09573v23.779l-3.29509,3.29509l-2.0014,2.0014l2.0014,2.0014l3.29509,3.29509v11.43374h-10.80812v-23.779l3.29509,-3.29509l2.0014,-2.0014l-2.0014,-2.0014l-3.29509,-3.29509v-11.43374h10.80812M94.23489,60.26489h-16.46979v15.43653l4.12452,4.12452l-4.12452,4.12452v27.7818h16.46979v-15.43653l-4.12452,-4.12452l4.12452,-4.12452v-27.7818z" fill="#455a64"></path></g></g></g></svg>
+							<h2 class="title">| create a vault</h2>
 						</div>
-				</div>
+					</div>
+				</div>	
+				{% endif %}
 			</div>
 		</div>
 		<ul class="data animated" style="">
@@ -127,7 +173,7 @@
 			{% if data_set[index].data == "" %}
 			{% if data_set[index].child_items < 1 %}
 			<li id={{ index }} class="folders">
-				<a style="visibility: hidden;" id="{{ index }}_settings" class="settings"><button class="btn btn-primary" style="position: absolute;margin-left: 25px;" id="{{ index|string }}_rename_select" onclick="rename('{{ index|string }}')">rename</button><button class="btn btn-primary save_new_name" style="position: absolute;margin-left: 25px;visibility: hidden;" id="{{ index|string }}_rename_submit" onclick="rename_submit('{{ index|string }}', '{{ data_set[index].href }}', 'folder')" placeholder="enter new folder name" type="button">Save</button><button id="{{ index|string }}_delete" class="btn btn-primary" onclick="window.location.href='/delete?path={{ data_set[index].href }}&type={{ data_set[index].type }}'">delete</button><input id="{{ index|string }}_new_folder_name" style="visibility: hidden;background-color: rgb(30 30 30 / 1);" class="folder_name new_folder_name"></a>
+				<a style="visibility: hidden;" id="{{ index }}_settings" class="settings"><button class="btn btn-primary" style="position: absolute;margin-left: 100px;" id="{{ index|string }}_rename_select" onclick="rename('{{ index|string }}')">rename</button><button class="btn btn-primary save_new_name" style="position: absolute;margin-left: 100px;visibility: hidden;" id="{{ index|string }}_rename_submit" onclick="rename_submit('{{ index|string }}', '{{ data_set[index].href }}', 'folder')" placeholder="enter new folder name" type="button">Save</button><button id="{{ index|string }}_delete" class="btn btn-primary" onclick="window.location.href='/delete?path={{ data_set[index].href }}&type={{ data_set[index].type }}'">delete</button><input id="{{ index|string }}_new_folder_name" style="visibility: hidden;background-color: rgb(30 30 30 / 1);" class="folder_name new_folder_name"></a>
 				<a style="visibility: visible;" id="{{ index }}_info" href="/home?path={{ data_set[index].href }}" title="{{ data_set[index].href }}" class="folders">
 					<svg class="icon-folder item" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="110" height="110" viewBox="0 0 172 172" style=" fill:#000000;"><g transform=""><g fill="none" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><g><path id="folder_1" class="folder_1" d="M128.28333,54.2875h-47.56875l-10.57083,-10.57083h-26.42708c-5.81396,0 -10.57083,4.75687 -10.57083,10.57083v21.14167h105.70833v-10.57083c0,-5.81396 -4.75688,-10.57083 -10.57083,-10.57083z" fill="#FFA000"></path><path id="folder_2" d="M128.28333,54.2875h-84.56667c-5.81396,0 -10.57083,4.75687 -10.57083,10.57083v52.85417c0,5.81396 4.75688,10.57083 10.57083,10.57083h84.56667c5.81396,0 10.57083,-4.75688 10.57083,-10.57083v-52.85417c0,-5.81396 -4.75688,-10.57083 -10.57083,-10.57083z" fill="#FFCA28"></path></g><path d="" fill="none"></path><path d="M86,172c-47.49649,0 -86,-38.50351 -86,-86v0c0,-47.49649 38.50351,-86 86,-86v0c47.49649,0 86,38.50351 86,86v0c0,47.49649 -38.50351,86 -86,86z" fill="none"></path><path d="M86,168.56c-45.59663,0 -82.56,-36.96337 -82.56,-82.56v0c0,-45.59663 36.96337,-82.56 82.56,-82.56v0c45.59663,0 82.56,36.96337 82.56,82.56v0c0,45.59663 -36.96337,82.56 -82.56,82.56z" fill="none"></path></g></g></svg>
 					<span class="name">{{ data_set[index].name }}</span> <span class="details">{{ data_set[index].child_items }} Items</span></a>
@@ -136,7 +182,7 @@
 			<!--href="/delete?path={{ data_set[index].href }}&type={{ data_set[index].type }}"-->
 			{% else %}
 			<li class="folders">
-				<a style="visibility: hidden;" id="{{ index }}_settings" class="settings"><button class="btn btn-primary" style="position: absolute;margin-left: 25px;" id="{{ index|string }}_rename_select" onclick="rename('{{ index|string }}')">rename</button><button class="btn btn-primary save_new_name" style="position: absolute;margin-left: 25px;visibility: hidden;" id="{{ index|string }}_rename_submit" onclick="rename_submit('{{ index|string }}', '{{ data_set[index].href }}', 'folder')" placeholder="enter new folder name" type="button">Save</button><button id="{{ index|string }}_delete" class="btn btn-primary" onclick="window.location.href='/delete?path={{ data_set[index].href }}&type={{ data_set[index].type }}'">delete</button><input id="{{ index|string }}_new_folder_name" style="visibility: hidden;background-color: rgb(30 30 30 / 1);" class="folder_name new_folder_name"></a>
+				<a style="visibility: hidden;" id="{{ index }}_settings" class="settings"><button class="btn btn-primary" style="position: absolute;margin-left: 100px;" id="{{ index|string }}_rename_select" onclick="rename('{{ index|string }}')">rename</button><button class="btn btn-primary save_new_name" style="position: absolute;margin-left: 100px;visibility: hidden;" id="{{ index|string }}_rename_submit" onclick="rename_submit('{{ index|string }}', '{{ data_set[index].href }}', 'folder')" placeholder="enter new folder name" type="button">Save</button><button id="{{ index|string }}_delete" class="btn btn-primary" onclick="window.location.href='/delete?path={{ data_set[index].href }}&type={{ data_set[index].type }}'">delete</button><input id="{{ index|string }}_new_folder_name" style="visibility: hidden;background-color: rgb(30 30 30 / 1);" class="folder_name new_folder_name"></a>
 				<a href="/home?path={{ data_set[index].href }}" id="{{ index }}_info" title="{{ data_set[index].href }}" class="folders">
 					<svg class="icon-folder item" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="110" height="110" viewBox="0 0 172 172" style=" fill:#000000;"><g transform=""><g fill="none" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><g><path id="folder_1" class="folder_1" d="M128.28333,54.2875h-47.56875l-10.57083,-10.57083h-26.42708c-5.81396,0 -10.57083,4.75687 -10.57083,10.57083v21.14167h105.70833v-10.57083c0,-5.81396 -4.75688,-10.57083 -10.57083,-10.57083z" fill="#FFA000"></path><path id="folder_1" class="folder_1" d="M116.28333,55.2875h-37.56875l-10.57083,-7.57083h-23.42708c-5.81396,0 -10.57083,4.75687 -10.57083,10.57083v34.14177h102.70833v,-5.81396,-10.57083z" fill="#FFFFFF"></path><path id="folder_2" d="M128.28333,54.2875h-84.56667c-5.81396,0 -10.57083,4.75687 -10.57083,10.57083v52.85417c0,5.81396 4.75688,10.57083 10.57083,10.57083h84.56667c5.81396,0 10.57083,-4.75688 10.57083,-10.57083v-52.85417c0,-5.81396 -4.75688,-10.57083 -10.57083,-10.57083z" fill="#FFCA28"></path></g><path d="" fill="none"></path><path d="M86,172c-47.49649,0 -86,-38.50351 -86,-86v0c0,-47.49649 38.50351,-86 86,-86v0c47.49649,0 86,38.50351 86,86v0c0,47.49649 -38.50351,86 -86,86z" fill="none"></path><path d="M86,168.56c-45.59663,0 -82.56,-36.96337 -82.56,-82.56v0c0,-45.59663 36.96337,-82.56 82.56,-82.56v0c45.59663,0 82.56,36.96337 82.56,82.56v0c0,45.59663 -36.96337,82.56 -82.56,82.56z" fill="none"></path></g></g></svg>
 					<span class="name">{{ data_set[index].name }}</span> <span class="details">{{ data_set[index].child_items }} Items</span></a>
@@ -145,7 +191,7 @@
 			{% endif %}
 			{% elif data_set[index].type == "vault" %}
 			<li class="folders">
-				<a style="visibility: hidden;" id="{{ index }}_settings" class="settings"><button class="share" onclick="window.location.href='/share?a=create&file_path={{ data_set[index].href }}&file_type=vault'"></button><button class="btn btn-primary" style="position: absolute;margin-left: 25px;" id="{{ index|string }}_rename_select" onclick="rename('{{ index|string }}')">rename</button><button class="btn btn-primary save_new_name" style="position: absolute;margin-left: 25px;visibility: hidden;" id="{{ index|string }}_rename_submit" onclick="rename_submit('{{ index|string }}', '{{ data_set[index].href }}', 'vault')" placeholder="enter new folder name" type="button">Save</button><button id="{{ index|string }}_delete" class="btn btn-primary" onclick="window.location.href='/delete?path={{ data_set[index].href }}&type={{ data_set[index].type }}'">delete</button><input id="{{ index|string }}_new_folder_name" style="visibility: hidden;background-color: rgb(30 30 30 / 1);" class="folder_name new_folder_name"></a>
+				<a style="visibility: hidden;" id="{{ index }}_settings" class="settings"><button class="share" onclick="window.location.href='/share?a=create&file_path={{ data_set[index].href }}&file_type=vault'"></button><button class="btn btn-primary" style="position: absolute;margin-left: 100px;" id="{{ index|string }}_rename_select" onclick="rename('{{ index|string }}')">rename</button><button class="btn btn-primary save_new_name" style="position: absolute;margin-left: 25px;visibility: hidden;" id="{{ index|string }}_rename_submit" onclick="rename_submit('{{ index|string }}', '{{ data_set[index].href }}', 'vault')" placeholder="enter new folder name" type="button">Save</button><button id="{{ index|string }}_delete" class="btn btn-primary" onclick="window.location.href='/delete?path={{ data_set[index].href }}&type={{ data_set[index].type }}'">delete</button><input id="{{ index|string }}_new_folder_name" style="visibility: hidden;background-color: rgb(30 30 30 / 1);" class="folder_name new_folder_name"></a>
 				<a  href="/open?path={{ data_set[index].path }}&name={{ data_set[index].enc_name }}&type=vault" id="{{ index }}_info" title="{{ data_set[index].href }}" class="folders">
 					<svg class="vault icon" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="75" height="75" viewBox="0 0 172 172" style="fill:#000000;margin: 24px 0px 0px 18px;"><g fill="none" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><path d="M0,172v-172h172v172z" fill="none"></path><g><path d="M28.66667,136.16667h21.5v10.75h-21.5zM121.83333,136.16667h21.5v10.75h-21.5z" fill="#455a64"></path><path d="M143.33333,143.33333h-114.66667c-7.91558,0 -14.33333,-6.41775 -14.33333,-14.33333v-93.16667c0,-7.91558 6.41775,-14.33333 14.33333,-14.33333h114.66667c7.91558,0 14.33333,6.41775 14.33333,14.33333v93.16667c0,7.91558 -6.41775,14.33333 -14.33333,14.33333" fill="#78909c"></path><path d="M143.33333,132.58333h-114.66667c-1.978,0 -3.58333,-1.60533 -3.58333,-3.58333v-93.16667c0,-1.978 1.60533,-3.58333 3.58333,-3.58333h114.66667c1.978,0 3.58333,1.60533 3.58333,3.58333v93.16667c0,1.978 -1.60533,3.58333 -3.58333,3.58333" fill="#90a4ae"></path><path d="M103.91667,46.58333c-19.79075,0 -35.83333,16.04258 -35.83333,35.83333c0,19.79075 16.04258,35.83333 35.83333,35.83333c19.79075,0 35.83333,-16.04258 35.83333,-35.83333c0,-19.79075 -16.04258,-35.83333 -35.83333,-35.83333M103.91667,107.5c-13.85317,0 -25.08333,-11.23017 -25.08333,-25.08333c0,-13.85317 11.23017,-25.08333 25.08333,-25.08333c13.85317,0 25.08333,11.23017 25.08333,25.08333c0,13.85317 -11.23017,25.08333 -25.08333,25.08333" fill="#37474f"></path><path d="M43,68.08333c-3.956,0 -7.16667,3.21067 -7.16667,7.16667v28.66667c0,3.956 3.21067,7.16667 7.16667,7.16667c3.956,0 7.16667,-3.21067 7.16667,-7.16667v-28.66667c0,-3.956 -3.21067,-7.16667 -7.16667,-7.16667" fill="#455a64"></path><g><path d="M126.54183,64.85833l1.4405,-1.4405c1.40467,-1.40467 1.40467,-3.66933 0,-5.06683c-1.40108,-1.40467 -3.66217,-1.40467 -5.06683,0l-1.4405,1.4405c1.89917,1.47275 3.59408,3.17125 5.06683,5.06683M81.2915,64.85833c1.47275,-1.892 3.17125,-3.59408 5.06683,-5.06683l-1.4405,-1.4405c-1.40467,-1.40467 -3.66575,-1.40467 -5.06683,0c-1.40467,1.3975 -1.40467,3.66217 0,5.06683zM75.25,82.41667c0,-1.21475 0.09675,-2.408 0.24367,-3.58333h-2.03533c-1.978,0 -3.58333,1.60533 -3.58333,3.58333c0,1.978 1.60533,3.58333 3.58333,3.58333h2.03533c-0.14692,-1.17533 -0.24367,-2.36858 -0.24367,-3.58333M103.91667,53.75c1.21475,0 2.408,0.10033 3.58333,0.24725v-2.03892c0,-1.978 -1.60533,-3.58333 -3.58333,-3.58333c-1.978,0 -3.58333,1.60533 -3.58333,3.58333v2.03892c1.17533,-0.14692 2.36858,-0.24725 3.58333,-0.24725M126.54183,99.975c-1.47275,1.892 -3.17125,3.59408 -5.06683,5.06683l1.4405,1.4405c0.69875,0.69875 1.61608,1.04992 2.53342,1.04992c0.91733,0 1.83467,-0.35117 2.53342,-1.04992c1.40467,-1.3975 1.40467,-3.66217 0,-5.06683zM81.2915,99.975l-1.4405,1.4405c-1.40467,1.40467 -1.40467,3.66933 0,5.06683c0.69517,0.69875 1.61608,1.04992 2.53342,1.04992c0.91733,0 1.83467,-0.35117 2.53342,-1.04992l1.4405,-1.4405c-1.89917,-1.47275 -3.59408,-3.17125 -5.06683,-5.06683M134.375,78.83333h-2.03533c0.14692,1.17533 0.24367,2.36858 0.24367,3.58333c0,1.21475 -0.09675,2.408 -0.24367,3.58333h2.03533c1.978,0 3.58333,-1.60533 3.58333,-3.58333c0,-1.978 -1.60533,-3.58333 -3.58333,-3.58333M103.91667,111.08333c-1.21475,0 -2.408,-0.10033 -3.58333,-0.24725v2.03892c0,1.978 1.60533,3.58333 3.58333,3.58333c1.978,0 3.58333,-1.60533 3.58333,-3.58333v-2.03892c-1.17533,0.14692 -2.36858,0.24725 -3.58333,0.24725" fill="#b0bec5"></path><path d="M43,60.91667c-3.956,0 -7.16667,3.21067 -7.16667,7.16667v28.66667c0,3.956 3.21067,7.16667 7.16667,7.16667c3.956,0 7.16667,-3.21067 7.16667,-7.16667v-28.66667c0,-3.956 -3.21067,-7.16667 -7.16667,-7.16667" fill="#cfd8dc"></path></g></g></g></svg>
 					<span class="name">{{ data_set[index].name }}</span> <span class="details">Account Vault</span></a>
@@ -168,11 +214,11 @@
 		{% with message = get_flashed_messages() %}
 		{% if message %}
 		<div class="alert success-alert">
-			{% if (message|string).replace("['", "").replace("']", "").startswith("https://") %}
-			<button onclick="copied()" id="share_button" class="click_share_url share_button" data-clipboard-text="{{ (message|string).replace("['", "").replace("']", "") }}" id="message">Click to copy share url!</button>
-			{% else %}
-			<button id="share_button" class="click_share_url share_button" id="message">{{ (message|string).replace("['", "").replace("']", "") }}</button>
-			{% endif %}
+				{% if (message|string).startswith("https://") %}
+				<button onclick="copied()" id="share_button" class="click_share_url share_button" data-clipboard-text="{{ message }}" id="message">Click to copy share url!</button>
+				{% else %}
+				<button id="share_button" class="click_share_url share_button" id="message">{{ (message|string) }}</button>
+				{% endif %}
 			</button>
 			<a class="close">&times;</a>
 		  </div>
@@ -180,13 +226,14 @@
 		{% endwith %}
 		<div class="nothingfound" style="display: {{ nothingfound }};">
 			<div class="nofiles"></div>
-			<span>No data here.</span>
+			<span>Nothing found!</span>
 		</div>
 
 	</div>
 
 	<!-- Include our script files -->
 	<script src="/static/js/home.js"></script>
+	<script src="/static/js/pwdgen.js"></script>
 	<script src="/static/js/selectbox.min.js"></script>
 	<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
 	<script src="https://kit.fontawesome.com/98889b1ced.js" crossorigin="anonymous"></script>

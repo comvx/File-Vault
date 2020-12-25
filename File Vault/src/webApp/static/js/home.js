@@ -29,6 +29,9 @@ function is_touch_device1() {
     document.execCommand('copy');
     window.getSelection().removeAllRanges();
   }
+  function copied(){
+    document.getElementById("share_button").innerHTML = "Url copied to clipboard!";
+}
 function settings_show(index){
     var panel_settings = document.getElementById(index+"_settings");
     var panel_info = document.getElementById(index+"_info");
@@ -96,14 +99,10 @@ function getIndex(color){
         }
     }
 }
-function copied(){
-    document.getElementById("share_button").innerHTML = "Url copied to clipboard!";
-}
 function show_add_format(){
     var add_form = document.getElementById("add-format");
     if(add_form.style.display == "none"){
         add_form.style.display = "inline";
-        setTimeout(hide_add_form, 2000);
     }else{
         add_form.style.display = "none";
     }
@@ -111,16 +110,14 @@ function show_add_format(){
 window.addEventListener('click', function (e){   
     if (document.getElementById('add-format').contains(e.target)){
 
-    } else if(document.getElementById('add-icon').contains(e.target) == false){
+    } else if(document.getElementById('add-icon').contains(e.target) == false && document.getElementById('close_pwdgen').contains(e.target) == false){
       var add_form = document.getElementById("add-format");
       if(add_form.style.display == "inline"){
-          console.log("d");
           add_form.style.display = "none";
       }
     }
   });
-
-
+  
   document.addEventListener("DOMContentLoaded", function(event) { 
     var clipboard = new ClipboardJS('#share_button');
     var search_dir = document.getElementById("search_dir");
@@ -132,16 +129,16 @@ window.addEventListener('click', function (e){
     }else if(url.includes("search_dir=")){
         var splitterURL = url.split("search_dir=")[1];
         search_dir.value = splitterURL;
+    if(url.includes("?path=")){
+        var splitterURL = window.location.href.split("?path=")[1];
+        search_dir.value = splitterURL.replace("%2F", "/");
+        console.log(search_dir.value);
+    }else if(url.includes("search_dir=")){
+        var splitterURL = window.location.href.split("search_dir=")[1];
+        search_dir.value = splitterURL.replace("%2F", "/");
     }
 });
 function gen_password(){
     var blur = document.getElementById("blur");
     var container = document.getElementById("container");
     var add_form = document.getElementById("add-format");
-    blur.style.display = "inline";
-    blur.style.visibility = "visible";
-    container.style.display = "inline";
-    container.style.visibility = "visible";
-    add_form.style.display = "none";
-}
->>>>>>> Stashed changes

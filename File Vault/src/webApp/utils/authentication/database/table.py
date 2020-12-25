@@ -17,6 +17,15 @@ class User(db.Model, UserMixin):
     master_password = db.Column(db.String(), nullable=False)
     directorys = db.relationship('Directory', backref='user')
     shares = db.relationship('Share', backref='user')
+    config_data = db.relationship('Config', backref='user')
+
+class Config(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+
+    name = db.Column(db.String(), nullable=False)
+    file_name = db.Column(db.String(), nullable=False)
+    path = db.Column(db.String(), nullable=False)
 
 class Share(db.Model):
     id = db.Column(db.Integer, primary_key=True)

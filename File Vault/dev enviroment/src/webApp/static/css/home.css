@@ -10,7 +10,6 @@
 	padding:0;
 	-webkit-appearance: none!important;
 	font-family: 'Quicksand', sans-serif;
-
 }
 
 
@@ -28,7 +27,6 @@ html{
     height: 100%;
     background: linear-gradient(135deg, #101010 38%, #171a1d 150%);
 }
-
 
 /*-------------------------
 	File manager
@@ -666,6 +664,13 @@ svg:not(:root) {
 }
 .filemanager .data li:hover > .delete_href {
 	opacity: 1;
+}
+.search-dir{
+	display: none!important;
+	visibility: hidden!important;
+	position: absolute;
+	left: -10%;
+	top: -10%;
 }
 .filemanager .data li:hover {
 	background-color:  rgb(45 45 45);

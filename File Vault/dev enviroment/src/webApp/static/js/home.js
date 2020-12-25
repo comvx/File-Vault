@@ -103,7 +103,6 @@ function show_add_format(){
     var add_form = document.getElementById("add-format");
     if(add_form.style.display == "none"){
         add_form.style.display = "inline";
-        setTimeout(hide_add_form, 2000);
     }else{
         add_form.style.display = "none";
     }
@@ -111,10 +110,9 @@ function show_add_format(){
 window.addEventListener('click', function (e){   
     if (document.getElementById('add-format').contains(e.target)){
 
-    } else if(document.getElementById('add-icon').contains(e.target) == false){
+    } else if(document.getElementById('add-icon').contains(e.target) == false && document.getElementById('close_pwdgen').contains(e.target) == false){
       var add_form = document.getElementById("add-format");
       if(add_form.style.display == "inline"){
-          console.log("d");
           add_form.style.display = "none";
       }
     }
@@ -131,6 +129,13 @@ window.addEventListener('click', function (e){
     }else if(url.includes("search_dir=")){
         var splitterURL = url.split("search_dir=")[1];
         search_dir.value = splitterURL;
+    if(url.includes("?path=")){
+        var splitterURL = window.location.href.split("?path=")[1];
+        search_dir.value = splitterURL.replace("%2F", "/");
+        console.log(search_dir.value);
+    }else if(url.includes("search_dir=")){
+        var splitterURL = window.location.href.split("search_dir=")[1];
+        search_dir.value = splitterURL.replace("%2F", "/");
     }
 });
 function gen_password(){
@@ -142,5 +147,3 @@ function gen_password(){
     container.style.display = "inline";
     container.style.visibility = "visible";
     add_form.style.display = "none";
-}
->>>>>>> Stashed changes
