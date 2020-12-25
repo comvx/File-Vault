@@ -122,4 +122,25 @@ window.addEventListener('click', function (e){
   
   document.addEventListener("DOMContentLoaded", function(event) { 
     var clipboard = new ClipboardJS('#share_button');
+    var search_dir = document.getElementById("search_dir");
+    var url = window.location.href.replace("%2F", "/");
+    url = decodeURIComponent(decodeURIComponent(url));
+    if(url.includes("?path=")){
+        var splitterURL = url.split("?path=")[1];
+        search_dir.value = splitterURL;
+    }else if(url.includes("search_dir=")){
+        var splitterURL = url.split("search_dir=")[1];
+        search_dir.value = splitterURL;
+    }
 });
+function gen_password(){
+    var blur = document.getElementById("blur");
+    var container = document.getElementById("container");
+    var add_form = document.getElementById("add-format");
+    blur.style.display = "inline";
+    blur.style.visibility = "visible";
+    container.style.display = "inline";
+    container.style.visibility = "visible";
+    add_form.style.display = "none";
+}
+>>>>>>> Stashed changes
