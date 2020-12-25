@@ -805,3 +805,4 @@ def logout():
     logout_user()
     flash("Sucessfully logout")
     return redirect(url_for("home"))
+    
