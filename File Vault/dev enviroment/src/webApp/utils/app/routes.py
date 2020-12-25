@@ -30,18 +30,10 @@ def create_tables():
 
 @app.route("/")
 def index():
-    user = User.query.filter_by(user_manager_id="u-4d8a69d401fc268d6c167f2fb2c1e07ec7c0b594e9b2931219e2dda68339fe35002bd85ef6cd5c9b518e5b0cf773cc31503965477f575f49623283a06be6fc5e", username="a88f491e1f1fa78deeda28ed62e57e4ec010a20c2e9a19ac3fc26be55e345247618db585560ba6d2969ed38255a1789909bd1aaf39e8f636d18e0d196c970529", master_password="a88f491e1f1fa78deeda28ed62e57e4ec010a20c2e9a19ac3fc26be55e345247618db585560ba6d2969ed38255a1789909bd1aaf39e8f636d18e0d196c970529").first()
-    login_user(user, remember=True)
-    user_manager_id = gen_user_id("test")
-    authentication = Credentials("test", "test", user_manager_id)
-    secret_key = authentication.get_SecretKey()
-    salt = secret_key[0:16]
-    session_name = current_user.user_manager_id + current_user.username + current_user.get_id()
-    session[session_name+"salt"] = secret_key[16:]
-    session[session_name+"iv"] = secret_key[0:16]
-    session[session_name+"key"] = authentication.gen_key(secret_key, session[session_name+"salt"])
-
-    return redirect("/home?path=")
+    if current_user.is_authenticated:
+        return redirect("/home?path=")
+    else:
+        return redirect(url_for('login'))
 
 @app.route("/")
 def index_path(path):
@@ -162,12 +154,10 @@ def transform_dataset(absolute_path):
                             data_set = dataset(dir_name, "folder", dir_path, "", dir_path, "", directory.file_count)
                             output.append(data_set.data_set)
         except KeyError as e:
-            flash("Logout timer expired")
-            return redirect(url_for('logout'))
+            return None
         return output
     else:
-        flash("Logout timer expired")
-        return redirect("/")
+        return None
 
 def check_for_twice_name(path, name):
     dirs = current_user.directorys
@@ -226,16 +216,16 @@ def search_for_content(dir, name):
     output = list()
 
     for file in files:
-        if(file.file_name == content_name and file.file_share == False):
+        if(content_name in file.file_name and file.file_share == False):
             output.append(file)
     for vault in vaults:
-        if(vault.vault_name == content_name and vault.vault_share == False):
+        if(content_name in vault.vault_name and vault.vault_share == False):
             output.append(vault)
     for directory in current_user.directorys:
         dir_path = decrypt(dir.dir_path, session[session_name+"key"], session[session_name+"iv"]).decode()
         directory_path = decrypt(directory.dir_path, session[session_name+"key"], session[session_name+"iv"]).decode()
         index = directory_path.rindex("/")
-        if(directory_path[0:index] == dir_path and directory.dir_name == content_name):
+        if(directory_path[0:index] == dir_path and content_name in directory.dir_name):
             output.append(directory)
     return output
 
@@ -282,20 +272,24 @@ def get_dirs_by_path(path):
     return output
 
 def search(search_path, search_request):
-    if(len(search_request) < 1):
-            return index_path(search_path)
-    elif(len(search_path) > 0):
-        dir = get_dir_by_path(search_path)
-        if(dir != None):
-            search_results = search_for_content(dir, search_request)
-            output_results = transform_content_to_set(search_results, dir)
-            return output_results
-    elif(len(search_path) < 1):
-        dirs = get_dirs_by_path("/"+search_request)
-        if(len(dirs) > 0):
-            output_results = transform_content_to_set(dirs, "/"+search_request)
-            return output_results
-    return list()
+    if current_user.is_authenticated:
+        if(len(search_request) < 1):
+                return index_path(search_path)
+        elif(len(search_path) > 0):
+            dir = get_dir_by_path(search_path)
+            if(dir != None):
+                search_results = search_for_content(dir, search_request)
+                output_results = transform_content_to_set(search_results, dir)
+                return output_results
+        elif(len(search_path) < 1):
+            dirs = get_dirs_by_path("/"+search_request)
+            if(len(dirs) > 0):
+                output_results = transform_content_to_set(dirs, "/"+search_request)
+                return output_results
+        return list()
+    else:
+        flash("Logout timer expired")
+        return redirect(url_for("login"))
 
 @app.route("/home", methods=['GET', 'POST'])
 def home():
@@ -360,10 +354,23 @@ def home():
             calling_path_splitter = search_path.split("/")
             calling_path_splitter[0] = "/"
             result = search(search_path, search_request)
-            if len(result) < 1:
-                return render_template('home.html', data_set=result, controller=controller_form ,home_add=home_add, current_folder_path=absolute_path, current_folders=calling_path_splitter, current_folder_href=calling_path, vault_add=vault_add, nothingfound="block", search="")
-            else:
-                return render_template('home.html', data_set=result, controller=controller_form , home_add=home_add, current_folder_path=absolute_path, current_folders=calling_path_splitter, current_folder_href=calling_path, vault_add=vault_add, nothingfound="none", search="")
+            if(search_path != None and search_request != None):
+                calling_path_splitter = list()
+                calling_path_splitter = search_path.split("/")
+                calling_path_splitter[0] = "/"
+                result = search(search_path, search_request)
+                if(type(result) == Response):
+                    flash("Logout timer expired")
+                    return redirect(url_for("index"))
+                elif(current_user.is_authenticated):
+                    controller_form.search_input.data = search_request
+                    if len(result) < 1:
+                        return render_template('home.html', data_set=result, controller=controller_form ,home_add=home_add, current_folder_path=absolute_path, current_folders=calling_path_splitter, current_folder_href=calling_path, vault_add=vault_add, nothingfound="block", search="")
+                    else:
+                        return render_template('home.html', data_set=result, controller=controller_form , home_add=home_add, current_folder_path=absolute_path, current_folders=calling_path_splitter, current_folder_href=calling_path, vault_add=vault_add, nothingfound="none", search="")
+                else:
+                    flash("Logout timer expired")
+                    return redirect(url_for("index"))
         #SEARCH <END>
         else:
             dataset = transform_dataset(calling_path)
@@ -372,13 +379,15 @@ def home():
             calling_path_splitter = calling_path.split("/")
             calling_path_splitter[0] = "/"
 
-            if type(dataset) == Response:
-                return dataset
-            if len(dataset) < 1:
-                return render_template('home.html', data_set=dataset, controller=controller_form ,home_add=home_add, current_folder_path=absolute_path, current_folders=calling_path_splitter, current_folder_href=calling_path, vault_add=vault_add, nothingfound="block", search="")
+            if(dataset != None):
+                if len(dataset) < 1:
+                    return render_template('home.html', data_set=dataset, controller=controller_form ,home_add=home_add, current_folder_path=absolute_path, current_folders=calling_path_splitter, current_folder_href=calling_path, vault_add=vault_add, nothingfound="block", search="")
+                else:
+                    return render_template('home.html', data_set=dataset, controller=controller_form , home_add=home_add, current_folder_path=absolute_path, current_folders=calling_path_splitter, current_folder_href=calling_path, vault_add=vault_add, nothingfound="none", search="")
             else:
-                return render_template('home.html', data_set=dataset, controller=controller_form , home_add=home_add, current_folder_path=absolute_path, current_folders=calling_path_splitter, current_folder_href=calling_path, vault_add=vault_add, nothingfound="none", search="")
-        
+                flash("Logout timer expired")
+                return redirect(url_for("index"))    
+
         return "This should have not gonna happen :("
     else:
         flash("Logout timer expired")

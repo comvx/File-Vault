@@ -122,13 +122,13 @@ window.addEventListener('click', function (e){
     var clipboard = new ClipboardJS('#share_button');
     var search_dir = document.getElementById("search_dir");
     var url = window.location.href.replace("%2F", "/");
+    url = decodeURIComponent(decodeURIComponent(url));
     if(url.includes("?path=")){
-        var splitterURL = window.location.href.split("?path=")[1];
-        search_dir.value = splitterURL.replace("%2F", "/");
-        console.log(search_dir.value);
+        var splitterURL = url.split("?path=")[1];
+        search_dir.value = splitterURL;
     }else if(url.includes("search_dir=")){
-        var splitterURL = window.location.href.split("search_dir=")[1];
-        search_dir.value = splitterURL.replace("%2F", "/");
+        var splitterURL = url.split("search_dir=")[1];
+        search_dir.value = splitterURL;
     }
 });
 function gen_password(){
